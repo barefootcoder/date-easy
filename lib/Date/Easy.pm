@@ -6,6 +6,12 @@ use autodie;
 
 # VERSION
 
+use Date::Easy::Date ':all';
+
+use Exporter;
+use parent 'Exporter';
+our @EXPORT = @Date::Easy::Date::EXPORT_OK;
+
 
 1;
 
