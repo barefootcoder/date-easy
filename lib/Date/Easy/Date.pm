@@ -121,14 +121,14 @@ sub new
 	if (@_ == 3)
 	{
 		($y, $m, $d) = @_;
-		--$m;										# timelocal will expect month as 0..11
+		--$m;										# timegm will expect month as 0..11
 	}
 	else
 	{
 		my ($time) = @_;
 		$time = time unless defined $time;
 		($d, $m, $y) = (localtime $time)[3..5];		# `Date`s are parsed relative to local time ...
-		$y += 1900;									# (timelocal does odd things w/ 2-digit dates)
+		$y += 1900;									# (timelocal/timegm does odd things w/ 2-digit dates)
 	}
 
 	my $truncated_date =
