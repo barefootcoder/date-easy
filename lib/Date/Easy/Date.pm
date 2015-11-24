@@ -138,6 +138,28 @@ sub new
 }
 
 
+# override addition and subtraction
+# numbers added to a ::Date are days
+
+use overload
+		'+' => \&add,
+		'-' => \&subtract;
+
+sub add
+{
+	my ($self, $rhs) = @_;
+
+	return $self->_mktime($self->epoch + 86_400 * $rhs);
+}
+
+sub subtract
+{
+	my ($self, $rhs) = @_;
+
+	return $self->_mktime($self->epoch - 86_400 * $rhs);
+}
+
+
 
 1;
 
