@@ -33,6 +33,11 @@ sub date ($)
 		}
 		return Date::Easy::Date->new($date);
 	}
+	elsif ( $date !~ /\d/ )
+	{
+		my $time = _parsedate($date);
+		return Date::Easy::Date->new($time);
+	}
 	else
 	{
 		my ($d, $m, $y) = _strptime($date);
@@ -42,7 +47,9 @@ sub date ($)
 		}
 		else
 		{
-			die "Illegal date: $date";
+			my $time = _parsedate($date);
+			die "Illegal date: $date" unless $time;
+			return Date::Easy::Date->new($time);
 		}
 	}
 	die("reached unreachable code");
@@ -110,6 +117,26 @@ sub _strptime
 	# we don't actually care about the hours/mins/secs, but if they're illegal, we should still fail
 	return undef unless ($hh || 0) <= 23 and ($mm || 0) <= 59 and ($ss || 0) <= 59;
 	return ($day, $month, $year);
+}
+
+
+sub _parsedate
+{
+	require Time::ParseDate;
+	require Time::Timezone;
+	no warnings 'redefine';
+	*orig_mkoff		= \&Time::ParseDate::mkoff;
+	*orig_tz_offset	= \&Time::ParseDate::tz_offset;
+
+	*Time::ParseDate::mkoff = sub { Time::Timezone::tz_local_offset() };
+	# Note: *not* *Time::Timezone::tz_offset!  Since it was already exported to the
+	# Time::ParseDate namespace, that's the one we care about.
+	*Time::ParseDate::tz_offset = sub { Time::Timezone::tz_local_offset() };
+	my $t = scalar Time::ParseDate::parsedate(shift, DATE_REQUIRED => 1);
+
+	*Time::ParseDate::mkoff		= \&orig_mkoff;
+	*Time::ParseDate::tz_offset	= \&orig_tz_offset;
+	return $t;
 }
 
 
