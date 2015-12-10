@@ -83,14 +83,16 @@ sub _strptime
 	# Of course, this gives me the opportunity to tweak a few things.  For instance, we can tweak
 	# the year value to fix RT/105031 (noted below).  Also, since this is only used by our ::Date
 	# class, we don't give a crap about times or timezones, so we can totally ignore those parts.
+	# (Well, *almost* totally: we still want to verify that we're getting valid values for them.)
 	# Which makes this code actually much smaller than its Date::Parse equivalent.
 	#
 	# On top of that, this is a tiny bit more efficient.
 
 	my ($str) = @_;
 
-	# don't care about seconds, minutes, hours, or timezone at all
-	my (undef,undef,undef, $day, $month, $year, undef) = Date::Parse::strptime($str);
+	# don't really care about seconds, minutes, or hours, but need to verify them
+	# don't care about timezone at all
+	my ($ss,$mm,$hh, $day, $month, $year, undef) = Date::Parse::strptime($str);
 	my $num_defined = defined($day) + defined($month) + defined($year);
 	return undef if $num_defined == 0;
 	if ($num_defined < 3)
@@ -105,6 +107,8 @@ sub _strptime
 																		# (this also corrects RT/105031)
 
 	return undef unless $month >= 1 and $month <= 12 and $day >= 1 and $day <= 31;
+	# we don't actually care about the hours/mins/secs, but if they're illegal, we should still fail
+	return undef unless ($hh || 0) <= 23 and ($mm || 0) <= 59 and ($ss || 0) <= 59;
 	return ($day, $month, $year);
 }
 
