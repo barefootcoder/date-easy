@@ -7,6 +7,7 @@ use autodie;
 # This giant variable is shamlessly stolen from the test file for Date::Parse.
 # I've reproduced the comments as well to preserve the authorship credits.
 # This is taken from GBARR/TimeDate-2.30/t/getdate.t.
+# (But the code hasn't changed since TimeDate-1.17.)
 # Mild reformatting applied.
 
 

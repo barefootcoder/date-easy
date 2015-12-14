@@ -8,7 +8,7 @@ use Test::More;
 use List::Util 1.29 qw< pairgrep pairmap >;			# minimum version for pairgrep/pairmap
 
 # This giant variable is shamlessly stolen from the test file for Time::ParseDate.
-# This is taken from MUIR/Time-ParseDate-2013.1113/t/datetime.t.
+# This is taken from MUIR/Time-ParseDate-2015.0925/t/datetime.t.
 # Applied `my` and quoted barewords; lines commented out are verbatim from the original.
 
 
