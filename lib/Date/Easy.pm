@@ -7,10 +7,11 @@ use autodie;
 # VERSION
 
 use Date::Easy::Date ':all';
+use Date::Easy::Datetime ':all';
 
 use Exporter;
 use parent 'Exporter';
-our @EXPORT = @Date::Easy::Date::EXPORT_OK;
+our @EXPORT = ( @Date::Easy::Date::EXPORT_OK, @Date::Easy::Datetime::EXPORT_OK, );
 
 
 1;
