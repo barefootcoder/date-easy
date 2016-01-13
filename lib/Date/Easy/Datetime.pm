@@ -22,9 +22,18 @@ use Time::Local;
 
 sub datetime
 {
+	my $datetime = shift;
+	return Date::Easy::Datetime->new( _str2time($datetime) );
 }
 
 sub now () { Date::Easy::Datetime->new }
+
+
+sub _str2time
+{
+	require Date::Parse;
+	return &Date::Parse::str2time;
+}
 
 
 #######################
