@@ -7,7 +7,7 @@ use File::Spec;
 use Cwd 'abs_path';
 use File::Basename;
 use lib File::Spec->catdir(dirname(abs_path($0)), 'lib');
-use DateParseTests qw< %DATE_PARSE_TESTS >;
+use DateParseTests qw< %DATE_PARSE_TESTS _date_parse_has_timezone >;
 
 
 # Check to make sure epoch seconds are not pumped through a parser.
@@ -48,7 +48,7 @@ sub local_adjusted
 	# That seems too fragile to me, so I'm going to use the same method I did when testing `date`:
 	# use a regex to figure out whether the string contains a timezone specifier or not.
 	# If it does, no adjustment is necessary.
-	return $time if $string =~ / ( [+-] \d{1,2} :? \d{2} | [A-Z]{3} (\h+ \d{4})? | [+-] \d{4} \h \( [A-Z]{3} \) | Z ) $/x;
+	return $time if _date_parse_has_timezone($string);
 
 	# This code is lifted from GBARR/TimeDate-1.17/t/getdate.t, lines 177-192.
 	# ( https://github.com/gbarr/perl-TimeDate/blob/v1.17/t/getdate.t#L177-L192 )

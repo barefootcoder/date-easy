@@ -178,7 +178,28 @@ our %DATE_PARSE_TESTS =
 # This is only ever used by test files anyway.
 
 use parent 'Exporter';
-our @EXPORT_OK = '%DATE_PARSE_TESTS';
+our @EXPORT_OK = qw< %DATE_PARSE_TESTS _date_parse_has_timezone _date_parse_remove_timezone >;
+
+
+# Some subs to help us deal with timezones.
+# These are exported too.
+
+my $TIMEZONE_REGEX = qr/ ( [+-] \d{1,2} :? \d{2} | [A-Z]{3} \h* ( \d{4} )? | [+-] \d{4} \h \( [A-Z]{3} \) | Z ) $/x;
+
+sub _date_parse_has_timezone
+{
+	return shift =~ /$TIMEZONE_REGEX/;
+}
+
+sub _date_parse_remove_timezone
+{
+	my $time = shift;
+
+	no warnings 'uninitialized';					# because $2 will often be undefined
+	$time =~ s/$TIMEZONE_REGEX/$2/;
+
+	return $time;
+}
 
 
 1;

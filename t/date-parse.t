@@ -12,7 +12,7 @@ use File::Spec;
 use Cwd 'abs_path';
 use File::Basename;
 use lib File::Spec->catdir(dirname(abs_path($0)), 'lib');
-use DateParseTests qw< %DATE_PARSE_TESTS >;
+use DateParseTests qw< %DATE_PARSE_TESTS _date_parse_remove_timezone >;
 use TimeParseDateTests qw< @TIME_PARSE_DATE_TESTS >;
 
 
@@ -74,7 +74,7 @@ foreach (keys %DATE_PARSE_TESTS)
 	$using_fallback = 0;							# always reset this before calling date() (see above)
 	lives_ok { $t = date($_) } "parse survival: $_";
 	# figure out what the proper date *should* be by dropping any timezone specifier
-	(my $proper = $_) =~ s/ ( [+-] \d{4} | [A-Z]{3} | [+-] \d{4} \h \( [A-Z]{3} \) | Z ) $//x;
+	my $proper = _date_parse_remove_timezone($_);
 	is $t->strftime($FMT), Time::Piece->_mktime(str2time($proper), 1)->strftime($FMT), "successful parse: $_"
 			or diag("compared against parse of: $proper");
 	is $using_fallback, 0, "parsed $_ without resorting to fallback";
