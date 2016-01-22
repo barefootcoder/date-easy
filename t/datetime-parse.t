@@ -10,7 +10,24 @@ use lib File::Spec->catdir(dirname(abs_path($0)), 'lib');
 use DateParseTests qw< %DATE_PARSE_TESTS >;
 
 
+# Check to make sure epoch seconds are not pumped through a parser.
+# (This somewhat mirrors the first set of tests in t/date.t,
+# except we don't have to worry about datestrings.)
+
+my %TEST_DATES =
+(
+	1426446360		=>	'2015-03-15',				# simple epoch
+	-99590400		=>	'1966-11-05',				# epoch (negative)
+);
+
 my $t;
+foreach (keys %TEST_DATES)
+{
+	lives_ok { $t = datetime($_) } "parse survival: $_";
+	is $t->epoch, $_, "successful parse: $_";
+}
+
+
 foreach (keys %DATE_PARSE_TESTS)
 {
 	lives_ok { $t = datetime($_) } "parse survival: $_";

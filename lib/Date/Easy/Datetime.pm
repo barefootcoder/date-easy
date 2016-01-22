@@ -23,7 +23,15 @@ use Time::Local;
 sub datetime
 {
 	my $datetime = shift;
-	return Date::Easy::Datetime->new( _str2time($datetime) );
+	if ( $datetime =~ /^-?\d+$/ )
+	{
+		return Date::Easy::Datetime->new($datetime);
+	}
+	else
+	{
+		return Date::Easy::Datetime->new( _str2time($datetime) );
+	}
+	die("reached unreachable code");
 }
 
 sub now () { Date::Easy::Datetime->new }
