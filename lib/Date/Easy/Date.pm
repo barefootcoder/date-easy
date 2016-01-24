@@ -165,7 +165,13 @@ sub new
 	my $truncated_date =
 			eval { timegm( 0,0,0, $d,$m,$y ) };		# ... but stored as UTC
 	die "Illegal date: $y/$m/$d" unless $truncated_date;
-	return $class->_mktime($truncated_date, 0);
+	return $class->_mkdate($truncated_date);
+}
+
+sub _mkdate
+{
+	my ($self_or_class, $epoch) = @_;
+	return scalar $self_or_class->_mktime($epoch, 0);					# always UTC
 }
 
 
@@ -180,14 +186,14 @@ sub add
 {
 	my ($self, $rhs) = @_;
 
-	return $self->_mktime($self->epoch + 86_400 * $rhs);
+	return $self->_mkdate($self->epoch + 86_400 * $rhs);
 }
 
 sub subtract
 {
 	my ($self, $rhs) = @_;
 
-	return $self->_mktime($self->epoch - 86_400 * $rhs);
+	return $self->_mkdate($self->epoch - 86_400 * $rhs);
 }
 
 

@@ -35,4 +35,10 @@ foreach (@TRIPLE_ARGS)
 }
 
 
+# make sure we return a proper object even in list context
+my @t = Date::Easy::Date->new;
+is scalar @t, 1, 'ctor not returning multiple values in list context';
+isa_ok $t[0], 'Date::Easy::Date', 'ctor in list context';
+
+
 done_testing;

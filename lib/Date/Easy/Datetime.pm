@@ -55,5 +55,5 @@ sub new
 		die("Illegal number of arguments to datetime()");
 	}
 
-	return $class->_mktime($t, 1);
+	return scalar $class->_mktime($t, 1);
 }

@@ -79,4 +79,10 @@ foreach (2,3,4,5,7)
 }
 
 
+# make sure we return a proper object even in list context
+my @t = Date::Easy::Datetime->new;
+is scalar @t, 1, 'ctor not returning multiple values in list context';
+isa_ok $t[0], 'Date::Easy::Datetime', 'ctor in list context';
+
+
 done_testing;
