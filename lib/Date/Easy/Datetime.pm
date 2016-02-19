@@ -29,7 +29,9 @@ sub datetime
 	}
 	else
 	{
-		return Date::Easy::Datetime->new( _str2time($datetime) );
+		my $t = _str2time($datetime);
+		$t = _parsedate($datetime) unless defined $t;
+		return Date::Easy::Datetime->new( $t );
 	}
 	die("reached unreachable code");
 }
@@ -41,6 +43,12 @@ sub _str2time
 {
 	require Date::Parse;
 	return &Date::Parse::str2time;
+}
+
+sub _parsedate
+{
+	require Time::ParseDate;
+	return scalar &Time::ParseDate::parsedate;
 }
 
 

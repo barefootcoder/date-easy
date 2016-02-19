@@ -301,7 +301,7 @@ use List::Util 1.29 qw< pairgrep pairmap >;			# minimum version for pairgrep/pai
 # and you just have to cycle through the array 2 elements at a time.)
 
 our @TIME_PARSE_DATE_TESTS =
-	pairmap { shift @$b => [ $a, @$b ] } 
+	pairmap { shift @$b => [ ref $a eq 'ARRAY' ? $a->[0] : $a, @$b ] }
 	@sdt;
 
 
