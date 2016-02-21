@@ -48,7 +48,7 @@ sub date ($)
 		else
 		{
 			my $time = _parsedate($date);
-			die "Illegal date: $date" unless $time;
+			die "Illegal date: $date" unless defined $time;
 			return Date::Easy::Date->new($time);
 		}
 	}
@@ -164,7 +164,7 @@ sub new
 
 	my $truncated_date =
 			eval { timegm( 0,0,0, $d,$m,$y ) };		# ... but stored as UTC
-	die "Illegal date: $y/$m/$d" unless $truncated_date;
+	die "Illegal date: $y/$m/$d" unless defined $truncated_date;
 	return $class->_mkdate($truncated_date);
 }
 

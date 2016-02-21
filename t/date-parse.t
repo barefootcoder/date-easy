@@ -2,6 +2,7 @@ use Test::Most 0.25;
 
 use Date::Easy;
 
+use Time::Local;
 use Date::Parse;
 use Time::ParseDate;
 
@@ -137,13 +138,33 @@ foreach (pairs @TIME_PARSE_DATE_TESTS)
 	# and the date generated should be the same date parsedate would generate without the timezone
 	is $t->strftime($FMT), Time::Piece->_mktime($parsedate_secs, 1)->strftime($FMT), "successful parse: $str"
 			or diag("compared against parse of: $proper");
-	#diag("parsedate returned: ", parsedate($proper));
-	#diag("which stringified to: " . Time::Piece->_mktime(parsedate($proper), 1));
-	#use Data::Printer; $t = Time::Piece->_mktime(parsedate($proper), 1); p $t;
 
 	# now make sure that our fiddling with the guts of parsedate didn't do any permanent damage
 	# (don't forget that the `scalar` is mandatory here)
 	is scalar parsedate($str, @args), $orig_t, "can still use parsedate normally ($str)";
+}
+
+
+# insure we properly handle a time of 0 (i.e. the exact day of the epoch)
+my $local_epoch = timelocal gmtime 0;				# for whatever timezone we happen to be in
+foreach (
+			$local_epoch,							# handled internally (epoch seconds)
+			'19700101',								# handled internally (compact datestring)
+			'1970-1-1-00:00:00 GMT',				# handled by Date::Parse
+			'1970/01/01 foo',						# handled by Time::ParseDate (zero in UTC)
+		)
+{
+	is date($_)->strftime($FMT), Time::Piece->_mktime(0, 0)->strftime($FMT), "successful 0 parse: $_";
+}
+
+# we need to deal with both 0 UTC and whatever actual day 0 local time is
+# (however, local time can only return 0 differently than UTC in the case of Time::ParseDate)
+foreach (
+			# handled by Time::ParseDate (zero in localtime)
+			Time::Piece->_mktime(0, 1)->strftime("%Y/%m/%d %H:%M:%S foo"),
+		)
+{
+	is date($_)->strftime($FMT), Time::Piece->_mktime(0, 1)->strftime($FMT), "successful local 0 parse: $_";
 }
 
 
