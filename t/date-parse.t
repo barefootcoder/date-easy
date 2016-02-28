@@ -13,11 +13,9 @@ use File::Spec;
 use Cwd 'abs_path';
 use File::Basename;
 use lib File::Spec->catdir(dirname(abs_path($0)), 'lib');
+use DateEasyTestUtil qw< compare_times >;
 use DateParseTests qw< %DATE_PARSE_TESTS _date_parse_remove_timezone >;
 use TimeParseDateTests qw< @TIME_PARSE_DATE_TESTS >;
-
-
-my $FMT = '%Y-%m-%d';
 
 
 # first go through stuff we handle specially: integers which may or not be interprested as epoch
@@ -38,7 +36,7 @@ my $t;
 foreach (keys %TEST_DATES)
 {
 	lives_ok { $t = date($_) } "parse survival: $_";
-	is $t->strftime($FMT), $TEST_DATES{$_}, "successful parse: $_";
+	compare_times($t, $TEST_DATES{$_}, "successful parse: $_");
 }
 
 
@@ -76,7 +74,7 @@ foreach (keys %DATE_PARSE_TESTS)
 	lives_ok { $t = date($_) } "parse survival: $_";
 	# figure out what the proper date *should* be by dropping any timezone specifier
 	my $proper = _date_parse_remove_timezone($_);
-	is $t->strftime($FMT), Time::Piece->_mktime(str2time($proper), 1)->strftime($FMT), "successful parse: $_"
+	compare_times($t, local => str2time($proper), "successful parse: $_")
 			or diag("compared against parse of: $proper");
 	is $using_fallback, 0, "parsed $_ without resorting to fallback";
 }
@@ -87,12 +85,12 @@ foreach (keys %DATE_PARSE_TESTS)
 
 my $tomorrow = today + 1;
 $t = date("tomorrow");
-is $t->strftime($FMT), $tomorrow->strftime($FMT), "successful parse: tomorrow";
+compare_times($t, $tomorrow, "successful parse: tomorrow");
 
 # this one is known to be unparseable by str2time()
 # (taken from MUIR/Time-ParseDate-2013.1113/t/datetime.t)
 $t = date('950404 00:22:12 "EDT');
-is $t->strftime($FMT), '1995-04-04', "successful parse: funky datestring plus time";
+compare_times($t, '1995-04-04', "successful parse: funky datestring plus time");
 
 
 # now rifle through everything that parsedate can handle
@@ -136,7 +134,7 @@ foreach (pairs @TIME_PARSE_DATE_TESTS)
 	lives_ok { $t = date($str) } "parse survival: $str";
 
 	# and the date generated should be the same date parsedate would generate without the timezone
-	is $t->strftime($FMT), Time::Piece->_mktime($parsedate_secs, 1)->strftime($FMT), "successful parse: $str"
+	compare_times($t, local => $parsedate_secs, "successful parse: $str")
 			or diag("compared against parse of: $proper");
 
 	# now make sure that our fiddling with the guts of parsedate didn't do any permanent damage
@@ -154,7 +152,7 @@ foreach (
 			'1970/01/01 foo',						# handled by Time::ParseDate (zero in UTC)
 		)
 {
-	is date($_)->strftime($FMT), Time::Piece->_mktime(0, 0)->strftime($FMT), "successful 0 parse: $_";
+	compare_times(date($_), UTC => 0, "successful 0 parse: $_");
 }
 
 # we need to deal with both 0 UTC and whatever actual day 0 local time is
@@ -164,7 +162,7 @@ foreach (
 			Time::Piece->_mktime(0, 1)->strftime("%Y/%m/%d %H:%M:%S foo"),
 		)
 {
-	is date($_)->strftime($FMT), Time::Piece->_mktime(0, 1)->strftime($FMT), "successful local 0 parse: $_";
+	compare_times(date($_), local => 0, "successful local 0 parse: $_");
 }
 
 

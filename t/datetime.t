@@ -3,6 +3,13 @@ use Test::Most 0.25;
 use Date::Easy;
 use Time::Piece;
 
+# local test modules
+use File::Spec;
+use Cwd 'abs_path';
+use File::Basename;
+use lib File::Spec->catdir(dirname(abs_path($0)), 'lib');
+use DateEasyTestUtil qw< compare_times >;
+
 
 my $t;
 lives_ok { $t = Date::Easy::Datetime->new } "basic ctor call";
@@ -66,7 +73,7 @@ foreach ("12/31/2009", "2/29/2000 2:28:09PM",
 	isnt $t, undef, "sanity check: can parse $_";
 
 	my $dt = Date::Easy::Datetime->new($t);
-	is $dt->epoch, $t, "successfully constructed (1arg): $t";
+	compare_times($dt, local => $t, "successfully constructed (1arg): $_");
 }
 
 

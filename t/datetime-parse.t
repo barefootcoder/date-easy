@@ -12,6 +12,7 @@ use File::Spec;
 use Cwd 'abs_path';
 use File::Basename;
 use lib File::Spec->catdir(dirname(abs_path($0)), 'lib');
+use DateEasyTestUtil qw< compare_times >;
 use DateParseTests qw< %DATE_PARSE_TESTS _date_parse_has_timezone >;
 use TimeParseDateTests qw< @TIME_PARSE_DATE_TESTS >;
 
@@ -30,7 +31,7 @@ my $t;
 foreach (keys %TEST_DATES)
 {
 	lives_ok { $t = datetime($_) } "parse survival: $_";
-	is $t->epoch, $_, "successful parse: $_";
+	compare_times($t, local => $_, "successful parse: $_");
 }
 
 
@@ -49,7 +50,7 @@ foreach (keys %DATE_PARSE_TESTS)
 {
 	$using_fallback = 0;							# always reset this before calling datetime() (see above)
 	lives_ok { $t = datetime($_) } "parse survival: $_";
-	cmp_ok $t ? $t->epoch : undef, '==', local_adjusted($_, $DATE_PARSE_TESTS{$_}), "successful parse: $_";
+	compare_times($t, local => local_adjusted($_, $DATE_PARSE_TESTS{$_}), "successful parse: $_");
 	is $using_fallback, 0, "parsed $_ without resorting to fallback";
 }
 
@@ -74,7 +75,7 @@ foreach (pairs @TIME_PARSE_DATE_TESTS)
 	next unless defined $parsedate_secs;
 
 	lives_ok { $t = datetime($str) } "parse survival: $str";
-	is $t->epoch, $parsedate_secs, "successful parse: $str";
+	compare_times($t, local => $parsedate_secs, "successful parse: $str");
 }
 
 
