@@ -13,6 +13,7 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 use parent 'Time::Piece';
 
+use Carp;
 use Time::Local;
 
 
@@ -36,6 +37,7 @@ sub date ($)
 	elsif ( $date !~ /\d/ )
 	{
 		my $time = _parsedate($date);
+		croak("Illegal date: $date") unless defined $time;
 		return Date::Easy::Date->new($time);
 	}
 	else
@@ -48,7 +50,7 @@ sub date ($)
 		else
 		{
 			my $time = _parsedate($date);
-			die "Illegal date: $date" unless defined $time;
+			croak("Illegal date: $date") unless defined $time;
 			return Date::Easy::Date->new($time);
 		}
 	}
@@ -164,7 +166,7 @@ sub new
 
 	my $truncated_date =
 			eval { timegm( 0,0,0, $d,$m,$y ) };		# ... but stored as UTC
-	die "Illegal date: $y/$m/$d" unless defined $truncated_date;
+	croak("Illegal date: $y/$m/$d") unless defined $truncated_date;
 	return $class->_mkdate($truncated_date);
 }
 

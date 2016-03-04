@@ -110,15 +110,6 @@ foreach (@SEXTUPLE_ARGS)
 }
 
 
-# other numbers of args should be errors
-
-foreach (3,4,5,8,9)
-{
-	my @args = (1) x $_;
-	throws_ok { Date::Easy::Datetime->new(@args) } qr/Illegal number of arguments/, "proper failure on $_ args";
-}
-
-
 # make sure we return a proper object even in list context
 my @t = Date::Easy::Datetime->new;
 is scalar @t, 1, 'ctor not returning multiple values in list context';

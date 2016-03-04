@@ -40,20 +40,6 @@ foreach (keys %TEST_DATES)
 }
 
 
-# now things which should throw errors
-
-my %BAD_DATES =
-(
-	28999999		=>	qr/Illegal date/,			# looks like a datestring, but not valid date
-	10000000		=>	qr/Illegal date/,			# looks like a datestring, but not valid date
-);
-
-foreach (keys %BAD_DATES)
-{
-	throws_ok { date($_) } $BAD_DATES{$_}, "found error: $_";
-}
-
-
 # now rifle through everything that str2time can handle
 
 # If our invocation of str2time (or, more accurately, str2time's guts) fails, our fallback will be

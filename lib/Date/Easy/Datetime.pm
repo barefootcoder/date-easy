@@ -13,6 +13,7 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 use parent 'Time::Piece';
 
+use Carp;
 use Time::Local;
 
 
@@ -31,6 +32,7 @@ sub datetime
 	{
 		my $t = _str2time($datetime);
 		$t = _parsedate($datetime) unless defined $t;
+		croak("Illegal datetime: $datetime") unless defined $t;
 		return Date::Easy::Datetime->new( $t );
 	}
 	die("reached unreachable code");
@@ -62,6 +64,7 @@ sub new
 {
 	my $class = shift;
 	my $zonespec = @_ == 2 || @_ == 7 ? shift : 'local';
+	croak("Unrecognized timezone specifier") unless exists $LOCAL_FLAG{$zonespec};
 
 	my $t;
 	if (@_ == 0)
@@ -80,7 +83,7 @@ sub new
 	}
 	else
 	{
-		die("Illegal number of arguments to datetime()");
+		croak("Illegal number of arguments to datetime()");
 	}
 
 	return scalar $class->_mktime($t, $LOCAL_FLAG{$zonespec});
