@@ -77,9 +77,42 @@ foreach ("12/31/2009", "2/29/2000 2:28:09PM",
 }
 
 
+# 2 args is a zone specifier and epoch seconds
+
+foreach ("12/31/2009", "2/29/2000 2:28:09PM",
+		"10/14/1066 09:00:00 GMT", "10/26/1881 15:00:00 MST", "3/31/1918 03:00:00 EDT")
+{
+	use Time::ParseDate;
+	my $t = parsedate($_, GMT => 1);
+	isnt $t, undef, "sanity check: can parse $_ (GMT)";
+
+	compare_times(Date::Easy::Datetime->new(UTC => $t), UTC => $t, "successfully constructed (2arg UTC): $_");
+	compare_times(Date::Easy::Datetime->new(GMT => $t), GMT => $t, "successfully constructed (2arg GMT): $_");
+	compare_times(Date::Easy::Datetime->new(local => $t), local => $t, "successfully constructed (2arg local): $_");
+}
+
+
+# 7 args is a zone specifier and year/month/day/hours/minutes/seconds
+
+foreach (@SEXTUPLE_ARGS)
+{
+	use Date::Parse;
+	my @args = /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/;
+	s/^0// foreach @args;							# more natural, and avoids any chance of octal number errors
+	foreach my $l (qw< local GMT UTC >)
+	{
+		my @extra_args = $l eq 'local' ? () : (GMT => 1);
+		my $secs = str2time(join(' ', join('/', @args[0,1,2]), join(':', @args[3,4,5])), @extra_args);
+		isnt $secs, undef, "sanity check: can parse $_ ($l)";
+
+		compare_times(Date::Easy::Datetime->new($l => @args), $l => $secs, "successfully constructed (7args $l): $_");
+	}
+}
+
+
 # other numbers of args should be errors
 
-foreach (2,3,4,5,7)
+foreach (3,4,5,8,9)
 {
 	my @args = (1) x $_;
 	throws_ok { Date::Easy::Datetime->new(@args) } qr/Illegal number of arguments/, "proper failure on $_ args";

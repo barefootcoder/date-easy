@@ -56,9 +56,12 @@ sub _parsedate
 # REGULAR CLASS STUFF #
 #######################
 
+my %LOCAL_FLAG = ( local => 1, UTC => 0, GMT => 0 );
+
 sub new
 {
 	my $class = shift;
+	my $zonespec = @_ == 2 || @_ == 7 ? shift : 'local';
 
 	my $t;
 	if (@_ == 0)
@@ -69,7 +72,7 @@ sub new
 	{
 		my ($y, $m, $d, $H, $M, $S) = @_;
 		--$m;										# timelocal/timegm will expect month as 0..11
-		$t = timelocal($S, $M, $H, $d, $m, $y);
+		$t = $zonespec eq 'local' ? timelocal($S, $M, $H, $d, $m, $y) : timegm($S, $M, $H, $d, $m, $y);
 	}
 	elsif (@_ == 1)
 	{
@@ -80,5 +83,5 @@ sub new
 		die("Illegal number of arguments to datetime()");
 	}
 
-	return scalar $class->_mktime($t, 1);
+	return scalar $class->_mktime($t, $LOCAL_FLAG{$zonespec});
 }
