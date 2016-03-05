@@ -23,17 +23,18 @@ use Time::Local;
 
 sub datetime
 {
+	my @zonespec = @_ % 2 == 0 ? shift : ();
 	my $datetime = shift;
 	if ( $datetime =~ /^-?\d+$/ )
 	{
-		return Date::Easy::Datetime->new($datetime);
+		return Date::Easy::Datetime->new(@zonespec, $datetime);
 	}
 	else
 	{
 		my $t = _str2time($datetime);
 		$t = _parsedate($datetime) unless defined $t;
 		croak("Illegal datetime: $datetime") unless defined $t;
-		return Date::Easy::Datetime->new( $t );
+		return Date::Easy::Datetime->new( @zonespec, $t );
 	}
 	die("reached unreachable code");
 }

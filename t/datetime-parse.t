@@ -32,6 +32,10 @@ foreach (keys %TEST_DATES)
 {
 	lives_ok { $t = datetime($_) } "parse survival: $_";
 	compare_times($t, local => $_, "successful parse: $_");
+
+	# now try the UTC version
+	lives_ok { $t = datetime(UTC => $_) } "parse survival: $_";
+	compare_times($t, UTC => $_, "successful parse: $_");
 }
 
 
@@ -49,8 +53,12 @@ my $using_fallback;
 foreach (keys %DATE_PARSE_TESTS)
 {
 	$using_fallback = 0;							# always reset this before calling datetime() (see above)
+	# local
 	lives_ok { $t = datetime($_) } "parse survival: $_";
 	compare_times($t, local => local_adjusted($_, $DATE_PARSE_TESTS{$_}), "successful parse: $_");
+	# and UTC
+	lives_ok { $t = datetime(UTC => $_) } "parse survival: $_";
+	compare_times($t, UTC => local_adjusted($_, $DATE_PARSE_TESTS{$_}), "successful parse: $_");
 	is $using_fallback, 0, "parsed $_ without resorting to fallback";
 }
 
@@ -74,8 +82,12 @@ foreach (pairs @TIME_PARSE_DATE_TESTS)
 	# we're not going to supply, or because it's just expected to fail), skip this test.
 	next unless defined $parsedate_secs;
 
+	# local
 	lives_ok { $t = datetime($str) } "parse survival: $str";
 	compare_times($t, local => $parsedate_secs, "successful parse: $str");
+	# and UTC
+	lives_ok { $t = datetime(UTC => $str) } "parse survival: $str";
+	compare_times($t, UTC => $parsedate_secs, "successful parse: $str");
 }
 
 
