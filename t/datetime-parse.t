@@ -2,6 +2,7 @@ use Test::Most 0.25;
 
 use Date::Easy;
 
+use Time::Local;
 use Date::Parse;
 use Time::ParseDate;
 
@@ -88,6 +89,27 @@ foreach (pairs @TIME_PARSE_DATE_TESTS)
 	# and UTC
 	lives_ok { $t = datetime(UTC => $str) } "parse survival: $str";
 	compare_times($t, UTC => $parsedate_secs, "successful parse: $str");
+}
+
+
+# these are the same tests for 0 epoch seconds we do in ::Date (and for the same reasons)
+foreach (
+			0,										# handled internally (epoch seconds)
+			'1970-1-1-00:00:00 GMT',				# handled by Date::Parse
+			'1970/01/01 GMT foo',					# handled by Time::ParseDate (zero in UTC)
+		)
+{
+	compare_times(datetime(UTC => $_), UTC => 0, "successful 0 parse: $_");
+}
+
+# we need to deal with both 0 UTC and whatever actual day 0 local time is
+# (however, local time can only return 0 differently than UTC in the case of Time::ParseDate)
+foreach (
+			# handled by Time::ParseDate (zero in localtime)
+			Time::Piece->_mktime(0, 1)->strftime("%Y/%m/%d %H:%M:%S foo"),
+		)
+{
+	compare_times(datetime($_), local => 0, "successful local 0 parse: $_");
 }
 
 
