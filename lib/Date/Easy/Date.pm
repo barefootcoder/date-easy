@@ -22,7 +22,7 @@ use Time::Local;
 ##############################
 
 
-sub date ($)
+sub date
 {
 	my $date = shift;
 	if ( $date =~ /^-?\d+$/ )
