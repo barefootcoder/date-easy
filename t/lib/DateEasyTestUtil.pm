@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use parent 'Exporter';
-our @EXPORT_OK = qw< compare_times >;
+our @EXPORT_OK = qw< compare_times is_true is_false >;
 
 use Carp;
 use Test::More;
@@ -49,4 +49,24 @@ sub compare_times
 
 	local $Test::Builder::Level = $Test::Builder::Level + 1;
 	is _fmt_time($obj, $fmt), $expected, $testname;
+}
+
+
+# These are my handy-dandy `is_true` and `is_false` functions that I wrote several years back,
+# because `ok` doesn't give me enough info on failure, and `is` can't distinguish Perl's several
+# false values or its infinitude of true values.  Maybe I will see if I can get these accepted into
+# Test::More (or Test::Most, perhaps) one day.
+
+sub is_true ($;$)
+{
+	my ($value, $testname) = @_;
+	local $Test::Builder::Level = $Test::Builder::Level + 1;
+	ok $value, $testname or diag("         got: $value\n    expected: something true\n");
+}
+
+sub is_false ($;$)
+{
+	my ($value, $testname) = @_;
+	local $Test::Builder::Level = $Test::Builder::Level + 1;
+	ok !$value, $testname or diag("         got: $value\n    expected: something false\n");
 }

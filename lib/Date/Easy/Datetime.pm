@@ -17,6 +17,22 @@ use Carp;
 use Time::Local;
 
 
+# this can be modified (preferably using `local`) to use GMT/UTC as the default
+# or you can pass a value to `import` via your `use` line
+our $DEFAULT_ZONE = 'local';
+
+my %ZONE_FLAG = ( local => 1, UTC => 0, GMT => 0 );
+
+
+sub import
+{
+	my @args;
+	exists $ZONE_FLAG{$_} ? $DEFAULT_ZONE = $_ : push @args, $_ foreach @_;
+	@_ = @args;
+	goto &Exporter::import;
+}
+
+
 ##############################
 # FUNCTIONS (*NOT* METHODS!) #
 ##############################
@@ -59,13 +75,11 @@ sub _parsedate
 # REGULAR CLASS STUFF #
 #######################
 
-my %LOCAL_FLAG = ( local => 1, UTC => 0, GMT => 0 );
-
 sub new
 {
 	my $class = shift;
-	my $zonespec = @_ == 2 || @_ == 7 ? shift : 'local';
-	croak("Unrecognized timezone specifier") unless exists $LOCAL_FLAG{$zonespec};
+	my $zonespec = @_ == 2 || @_ == 7 ? shift : $DEFAULT_ZONE;
+	croak("Unrecognized timezone specifier") unless exists $ZONE_FLAG{$zonespec};
 
 	my $t;
 	if (@_ == 0)
@@ -87,5 +101,10 @@ sub new
 		croak("Illegal number of arguments to datetime()");
 	}
 
-	return scalar $class->_mktime($t, $LOCAL_FLAG{$zonespec});
+	return scalar $class->_mktime($t, $ZONE_FLAG{$zonespec});
 }
+
+
+sub is_local {  shift->[Time::Piece::c_islocal] }
+sub is_gmt   { !shift->[Time::Piece::c_islocal] }
+*is_utc = \&is_gmt;
