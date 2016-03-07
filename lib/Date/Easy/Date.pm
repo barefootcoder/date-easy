@@ -202,7 +202,5 @@ sub subtract
 
 1;
 
-# ABSTRACT: easy dates with Time::Piece compatibility
+# ABSTRACT: easy date class
 # COPYRIGHT
-
-__END__

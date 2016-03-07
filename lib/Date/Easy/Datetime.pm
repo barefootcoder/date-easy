@@ -110,3 +110,10 @@ sub new
 sub is_local {  shift->[Time::Piece::c_islocal] }
 sub is_gmt   { !shift->[Time::Piece::c_islocal] }
 *is_utc = \&is_gmt;
+
+
+
+1;
+
+# ABSTRACT: easy datetime class
+# COPYRIGHT
