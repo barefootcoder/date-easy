@@ -56,10 +56,18 @@ foreach (keys %DATE_PARSE_TESTS)
 	$using_fallback = 0;							# always reset this before calling datetime() (see above)
 	# local
 	lives_ok { $t = datetime($_) } "parse survival: $_";
-	compare_times($t, local => local_adjusted($_, $DATE_PARSE_TESTS{$_}), "successful parse: $_");
+	compare_times($t, local => local_adjusted($_, $DATE_PARSE_TESTS{$_}), "successful default parse: $_");
 	# and UTC
 	lives_ok { $t = datetime(UTC => $_) } "parse survival: $_";
-	compare_times($t, UTC => local_adjusted($_, $DATE_PARSE_TESTS{$_}), "successful parse: $_");
+	compare_times($t, UTC => $DATE_PARSE_TESTS{$_}, "successful UTC parse: $_");
+	# explicit local
+	lives_ok { $t = datetime(local => $_) } "parse survival: $_";
+	compare_times($t, local => local_adjusted($_, $DATE_PARSE_TESTS{$_}), "successful local parse: $_");
+	{
+		# tricky one:
+		local $Date::Easy::Datetime::DEFAULT_ZONE = 'UTC';
+		compare_times(datetime($_), UTC => $DATE_PARSE_TESTS{$_}, "successful default UTC parse: $_");
+	}
 	is $using_fallback, 0, "parsed $_ without resorting to fallback";
 }
 
@@ -77,18 +85,24 @@ foreach (pairs @TIME_PARSE_DATE_TESTS)
 	# directly into a call to `is` or `_mktime` or somesuch, you would have to use `scalar`.  Remember,
 	# parsedate called in array context returns the "remainder" of the parsed string (which would
 	# always be undef, which could wreak havoc with a call, particularly one to _mktime).
-	my $parsedate_secs = parsedate($str);
+	my $local_secs = parsedate($str);
+	my $gmt_secs = parsedate($str, GMT => 1);
 
 	# If parsedate() won't parse this (e.g. because it requires PREFER_PAST or PREFER_FUTURE, which
 	# we're not going to supply, or because it's just expected to fail), skip this test.
-	next unless defined $parsedate_secs;
+	next unless defined $local_secs;
 
 	# local
 	lives_ok { $t = datetime($str) } "parse survival: $str";
-	compare_times($t, local => $parsedate_secs, "successful parse: $str");
+	compare_times($t, local => $local_secs, "successful default parse: $str");
 	# and UTC
 	lives_ok { $t = datetime(UTC => $str) } "parse survival: $str";
-	compare_times($t, UTC => $parsedate_secs, "successful parse: $str");
+	compare_times($t, UTC => $gmt_secs, "successful UTC parse: $str");
+	# just to be safe
+	{
+		local $Date::Easy::Datetime::DEFAULT_ZONE = 'UTC';
+		compare_times(datetime($str), UTC => $gmt_secs, "successful default UTC parse: $str");
+	}
 }
 
 

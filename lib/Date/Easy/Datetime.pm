@@ -39,18 +39,18 @@ sub import
 
 sub datetime
 {
-	my @zonespec = @_ % 2 == 0 ? shift : ();
+	my $zonespec = @_ % 2 == 0 ? shift : $DEFAULT_ZONE;
 	my $datetime = shift;
 	if ( $datetime =~ /^-?\d+$/ )
 	{
-		return Date::Easy::Datetime->new(@zonespec, $datetime);
+		return Date::Easy::Datetime->new($zonespec, $datetime);
 	}
 	else
 	{
-		my $t = _str2time($datetime);
-		$t = _parsedate($datetime) unless defined $t;
+		my $t = _str2time($datetime, $zonespec);
+		$t = _parsedate($datetime, $zonespec) unless defined $t;
 		croak("Illegal datetime: $datetime") unless defined $t;
-		return Date::Easy::Datetime->new( @zonespec, $t );
+		return Date::Easy::Datetime->new( $zonespec, $t );
 	}
 	die("reached unreachable code");
 }
@@ -61,13 +61,15 @@ sub now () { Date::Easy::Datetime->new }
 sub _str2time
 {
 	require Date::Parse;
-	return &Date::Parse::str2time;
+	my ($time, $zone) = @_;
+	return Date::Parse::str2time($time, $zone eq 'local' ? () : $zone);
 }
 
 sub _parsedate
 {
 	require Time::ParseDate;
-	return scalar &Time::ParseDate::parsedate;
+	my ($time, $zone) = @_;
+	return scalar Time::ParseDate::parsedate($time, $zone eq 'local' ? () : (GMT => 1));
 }
 
 
