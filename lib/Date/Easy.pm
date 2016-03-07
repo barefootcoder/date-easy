@@ -28,4 +28,8 @@ sub import
 # ABSTRACT: easy dates with Time::Piece compatibility
 # COPYRIGHT
 
-__END__
+
+=head1 DESCRIPTION
+
+More complete docs coming soon.  For now, refer to my blog series
+I<L<A Date with CPAN|http://blogs.perl.org/users/buddy_burden/2015/09/a-date-with-cpan-part-1-state-of-the-union.html>>.

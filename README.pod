@@ -8,6 +8,11 @@ Date::Easy - easy dates with Time::Piece compatibility
 
 This document describes version 0.01 of Date::Easy.
 
+=head1 DESCRIPTION
+
+More complete docs coming soon.  For now, refer to my blog series
+I<L<A Date with CPAN|http://blogs.perl.org/users/buddy_burden/2015/09/a-date-with-cpan-part-1-state-of-the-union.html>>.
+
 =for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
 
 =head1 SUPPORT
@@ -40,10 +45,9 @@ Buddy Burden <barefootcoder@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2015 by Buddy Burden.
+This software is Copyright (c) 2016 by Buddy Burden.
 
 This is free software, licensed under:
 
   The Artistic License 2.0 (GPL Compatible)
 
-=cut
