@@ -30,7 +30,7 @@ You can find documentation for this module with the perldoc command.
 		likely to get accepted (or least likely to get accepted more quickly).
 
 		If you just want to report a problem or suggest a feature, that's okay too.  You can create
-		an issue on GitHub here: L<http://github.com/me/date-easy/issues>.
+		an issue on GitHub here: L<http://github.com/barefootcoder/date-easy/issues>.
 
 =head2 Source Code
 
@@ -51,3 +51,4 @@ This is free software, licensed under:
 
   The Artistic License 2.0 (GPL Compatible)
 
+=cut
