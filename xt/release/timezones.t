@@ -11,7 +11,9 @@ foreach (`find $zoneinfo -type f`)
 	chomp;
 	s{^$zoneinfo/}{};
 	$ENV{TZ} = $_;
-	is date("04/95 00:22:12 PDT")->strftime('%Y-%m-%d'), '1995-04-01', "simple parse in timezone: $_";
+
+	my $td = date("04/95 00:22:12 PDT");
+	is join('-', $td->year, $td->mon, $td->mday), '1995-4-1', "simple parse in timezone: $_";
 }
 
 
