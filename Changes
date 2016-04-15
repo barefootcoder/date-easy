@@ -8,6 +8,8 @@ Revision history for Date-Easy
 
     [Distro Fixes]
     * Incorrect issues link fixed
+    * Marked bogusly failing datetime test as TODO
+      (see also: https://github.com/muir/Time-modules/issues/8)
 
 0.01      2016-03-07 01:22:16PST-0800 America/Los_Angeles
 

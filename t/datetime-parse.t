@@ -123,7 +123,13 @@ foreach (
 			Time::Piece->_mktime(0, 1)->strftime("%Y/%m/%d %H:%M:%S foo"),
 		)
 {
-	compare_times(datetime($_), local => 0, "successful local 0 parse: $_");
+	TODO:
+	{
+		# This test only works if the local timezone is not currently in DST.
+		# See: https://github.com/muir/Time-modules/issues/8
+		local $TODO = "wating for a bug fix in Time::ParseDate" if (localtime)[8];
+		compare_times(datetime($_), local => 0, "successful local 0 parse: $_");
+	}
 }
 
 
