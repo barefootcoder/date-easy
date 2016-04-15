@@ -2,6 +2,10 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+    [Bug Fixes]
+    * correct the bug whereby handing off to Time::ParseDate::parsedate
+      used the wrong DST flag
+
     [Distro Fixes]
     * Incorrect issues link fixed
 

@@ -15,7 +15,7 @@ use File::Basename;
 use lib File::Spec->catdir(dirname(abs_path($0)), 'lib');
 use DateEasyTestUtil qw< compare_times >;
 use DateParseTests qw< %DATE_PARSE_TESTS _date_parse_remove_timezone >;
-use TimeParseDateTests qw< @TIME_PARSE_DATE_TESTS >;
+use TimeParseDateTests qw< @TIME_PARSE_DATE_TESTS get_ymd_from_parsedate >;
 
 
 # first go through stuff we handle specially: integers which may or not be interprested as epoch
@@ -92,25 +92,9 @@ foreach (pairs @TIME_PARSE_DATE_TESTS)
 	# we're not going to supply, or because it's just expected to fail), skip this test.
 	next unless defined parsedate($str);
 
-	# figure out what the proper date *should* be by dropping any timezone specifier
-																		# matching code from Time/ParseDate.pm:
-	my $break = qr{(?:\s+|\Z|\b(?![-:.,/]\d))};												# line 67
-	(my $proper = $str) =~ s/ (
-					[+-] \d\d:?\d\d \( "? ( [A-Z]{1,4}[TCW56] | IDLE ) \)					# lines 424-435
-				|	GMT \s* ( [-+]\d{1,2} )													# line 441
-				|	( GMT \s* )? [+-] \d\d:?\d\d											# line 452
-				|	"? ( [A-Z]{1,4}[TCW56] | IDLE )											# line 457
-			) $break //x;
-
-	# Assigning this to a scalar forces scalar context, obviously.  However, if you try to put this
-	# directly into a call to `is` or `_mktime` or somesuch, you would have to use `scalar`.  Remember,
-	# parsedate called in array context returns the "remainder" of the parsed string (which would
-	# always be undef, which could wreak havoc with a call, particularly one to _mktime).
-	my $parsedate_secs = parsedate($proper, DATE_REQUIRED => 1);
-
 	# If the only thing that would cause parsedate to fail is not having a date (e.g. "now +4 secs"),
 	# let's test that and make sure date() fails as well.
-	unless (defined $parsedate_secs)
+	unless ( defined parsedate($str, DATE_REQUIRED => 1) )
 	{
 		throws_ok { date($str) } qr/Illegal date/, "correctly refused to parse: $str";
 		next;
@@ -119,13 +103,13 @@ foreach (pairs @TIME_PARSE_DATE_TESTS)
 	# if we got this far, the parse shouldn't blow up
 	lives_ok { $t = date($str) } "parse survival: $str";
 
-	# and the date generated should be the same date parsedate would generate without the timezone
-	compare_times($t, local => $parsedate_secs, "successful parse: $str")
-			or diag("compared against parse of: $proper");
-
-	# now make sure that our fiddling with the guts of parsedate didn't do any permanent damage
-	# (don't forget that the `scalar` is mandatory here)
-	is scalar parsedate($str, @args), $orig_t, "can still use parsedate normally ($str)";
+	# and the date generated should be the same date that we would generate from the year, month,
+	# and day that we *would* get out of parsedate if it actually returned those things
+	# (since it doesn't, we have to use our hacky simulation of how that would work, if it worked;
+	# see get_ymd_from_parsedate in TimeParseDateTests)
+	my $d; lives_ok { $d = Date::Easy::Date->new(get_ymd_from_parsedate($str)) }
+			"[sanity check] test parse survival: $str";
+	compare_times($t, $d, "successful parse: $str");
 }
 
 

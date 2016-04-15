@@ -8,7 +8,7 @@ use Test::More;
 use List::Util 1.29 qw< pairgrep pairmap >;			# minimum version for pairgrep/pairmap
 
 # This giant variable is shamlessly stolen from the test file for Time::ParseDate.
-# This is taken from MUIR/Time-ParseDate-2015.0925/t/datetime.t.
+# This is taken from MUIR/Time-ParseDate-2015.103/t/datetime.t.
 # Applied `my` and quoted barewords; lines commented out are verbatim from the original.
 
 
@@ -32,11 +32,11 @@ use List::Util 1.29 qw< pairgrep pairmap >;			# minimum version for pairgrep/pai
 		786437760, ['12/02/94 22:56.', NOW => 785300000, WHOLE => 0],
 		786437760, ['12/2/94 10:56Pm', NOW => 785300000],
 		786437760, ['94/12/2 10:56 pm', NOW => 785300000],
-		786437763, ['94/12/02 22:56:03', NOW => 785300000],   
-		786437763, ['94/12/02 22:56:03.500', NOW => 785300000],   
-		786437763.5, ['94/12/02 22:56:03.500', SUBSECOND => 1, NOW => 785300000],   
-		786437763, ['94/12/02 10:56:03:500PM', NOW => 785300000],   
-		786437763.5, ['94/12/02 10:56:03:500PM', SUBSECOND => 1, NOW => 785300000],   
+		786437763, ['94/12/02 22:56:03', NOW => 785300000],
+		786437763, ['94/12/02 22:56:03.500', NOW => 785300000],
+		786437763.5, ['94/12/02 22:56:03.500', SUBSECOND => 1, NOW => 785300000],
+		786437763, ['94/12/02 10:56:03:500PM', NOW => 785300000],
+		786437763.5, ['94/12/02 10:56:03:500PM', SUBSECOND => 1, NOW => 785300000],
 		786437760, ['10:56Pm 94/12/02', NOW => 785300000],
 		786437763, ['22:56:03 1994/12/02', NOW => 785300000],
 		786437763, ['22:56:03.5 1994/12/02', NOW => 785300000],
@@ -49,7 +49,7 @@ use List::Util 1.29 qw< pairgrep pairmap >;			# minimum version for pairgrep/pai
 		786437760, ['10:56Pm 94/12/02', NOW => 785300000],
 		796980132, ['Tue Apr 4 00:22:12 PDT 1995'],
 		796980132, ['April 4th 1995 12:22:12AM', ZONE => 'PDT'],
-		827878812, ['Tue Mar 26 14:20:12 1996'],		
+		827878812, ['Tue Mar 26 14:20:12 1996'],
 		827878812, ['Tue Mar 26 14:20:12 1996', SUBSECOND => 1],
 		827878812, ['Tue Mar 26 14:20:12.5 1996, and then', WHOLE => 0],
 		827878812.5, ['Tue Mar 26 14:20:12.5 1996', SUBSECOND => 1],
@@ -62,7 +62,7 @@ use List::Util 1.29 qw< pairgrep pairmap >;			# minimum version for pairgrep/pai
 		827878812, ['Tue, 26 Mar 22:20:12 +0000 (GMT) 1996'],
 		784394917, ['Wed, 9 Nov 1994 7:28:37'],
 		784394917, ['Wed, 9 Nov 1994 7:28:37: Seven', WHOLE => 0],
-		784887518, ['Tue, 15 Nov 1994 0:18:38'], 
+		784887518, ['Tue, 15 Nov 1994 0:18:38'],
 		788058300, ['21 dec 17:05', NOW => 785300000],
 		802940400, ['06/12/1995'],
 		802940400, ['12/06/1995', UK => 1],
@@ -190,9 +190,9 @@ use List::Util 1.29 qw< pairgrep pairmap >;			# minimum version for pairgrep/pai
 		828856838, ['06/Apr/1996:23:00:38 -0700'],
 		828946838, ['07/Apr/1996:23:00:38 -0800'],
 		895474800, ['5/18/1998'],
-		796980132, ['04/Apr/1995:00:22:12', ZONE => 'PDT'], 
-		796983732, ['04/Apr/1995:00:22:12 -0800'], 
-		796983732, ['04/Apr/1995:00:22:12', ZONE => 'PST'], 
+		796980132, ['04/Apr/1995:00:22:12', ZONE => 'PDT'],
+		796983732, ['04/Apr/1995:00:22:12 -0800'],
+		796983732, ['04/Apr/1995:00:22:12', ZONE => 'PST'],
 		202772100, ['5:35 pm june 4th 1976 EDT'],
 		796892400, ['04/03', NOW => 796980132, PREFER_PAST => 1],
 		765702000, ['04/07', NOW => 796980132, PREFER_PAST => 1],
@@ -309,7 +309,304 @@ our @TIME_PARSE_DATE_TESTS =
 # This is only ever used by test files anyway.
 
 use parent 'Exporter';
-our @EXPORT_OK = '@TIME_PARSE_DATE_TESTS';
+our @EXPORT_OK = qw< @TIME_PARSE_DATE_TESTS get_ymd_from_parsedate >;
+
+
+####################################################################################################
+# This is a stolen and hacked up copy of parsedate from Time::ParseDate as of v2015.103.  Its
+# purpose is to return a number of epoch seconds *without* doing any timezone adjustment.  This is
+# then used by a small function (get_ymd_from_parsedate) directly underneath it, which just pulls
+# out the year, month, and day from the seconds.  This gives us a YMD to construct a date object
+# with, which we can compare against what the parsedate fallback in Date::Easy::Date produces.  If
+# the two don't match, there's likely a problem somewhere.
+#
+# For this purpose, we have changed the parsedate code only minimally.  Specifically:
+#	*	All debugging printing is removed.
+#	*	All references to `$parse` (which was only used if `$debug` was true) are removed.
+#	*	The call to `jd_secondsgm` is changed to `jd_secondslocal` (because all dates for
+#		Date::Easy::Date are parsed locally, then stored as GMT).
+#	*	The block of code starting with `if ($tz)` (lines 358-395 in the original file) is excised
+#		completely.  This is the sum of all the timezone adjustements.
+# Other than those changes, the code should be identical.
+#
+# In order to let the code call the functions it wants, we have import a number of non-exported
+# functions, which we do by coderef aliasing.  We also have to suck in whatever Time::JulianDay
+# exports, and the `%mtable` hash from Time::ParseDate.
+#
+# Note that we have to pull in one line of code from outside the parsedate sub: the definition of
+# `$break`.  Also note that the copied code is changed so minimally that we even left the few cases
+# of whitespace at the ends of lines.
+####################################################################################################
+
+use Time::ParseDate '%mtable';
+use Time::JulianDay;
+*righttime = \&Time::ParseDate::righttime;
+*parse_tz_only = \&Time::ParseDate::parse_tz_only;
+*parse_time_only = \&Time::ParseDate::parse_time_only;
+*parse_date_only = \&Time::ParseDate::parse_date_only;
+*parse_year_only = \&Time::ParseDate::parse_year_only;
+*parse_time_offset = \&Time::ParseDate::parse_time_offset;
+*parse_date_offset = \&Time::ParseDate::parse_date_offset;
+*expand_two_digit_year = \&Time::ParseDate::expand_two_digit_year;
+
+my $break = qr{(?:\s+|\Z|\b(?![-:.,/]\d))};
+
+sub parsedate
+{
+        my ($t, %options) = @_;
+
+        my ($y, $m, $d);        # year, month - 1..12, day
+        my ($H, $M, $S);        # hour, minute, second
+        my $tz;                 # timezone
+        my $tzo;                # timezone offset
+        my ($rd, $rs);          # relative days, relative seconds
+
+        my $rel;                # time&|date is relative
+
+        my $isspec;
+        my $now = defined($options{NOW}) ? $options{NOW} : time;
+        my $passes = 0;
+        my $uk = defined($options{UK}) ? $options{UK} : 0;
+
+	if ($t =~ s#^   ([ \d]\d) 
+			/ (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)
+			/ (\d\d\d\d)
+			: (\d\d)
+			: (\d\d)
+			: (\d\d)
+			(?:
+			 [ ]
+			 ([-+] \d\d\d\d)
+			  (?: \("?(?:(?:[A-Z]{1,4}[TCW56])|IDLE)\))?
+			 )?
+			 $break
+			##xi) { #"emacs
+		# [ \d]/Mon/yyyy:hh:mm:ss [-+]\d\d\d\d
+		# This is the format for www server logging.
+
+		($d, $m, $y, $H, $M, $S, $tzo) = ($1, $mtable{"\u\L$2"}, $3, $4, $5, $6, $7 ? &mkoff($7) : ($tzo || undef));
+	} elsif ($t =~ s#^(\d\d)/(\d\d)/(\d\d)\.(\d\d)\:(\d\d)($break)##) {
+		# yy/mm/dd.hh:mm
+		# I support this format because it's used by wbak/rbak
+		# on Apollo Domain OS.  Silly, but historical.
+
+		($y, $m, $d, $H, $M, $S) = ($1, $2, $3, $4, $5, 0);
+        } else {
+                while(1) {
+                        if (! defined $m and ! defined $rd and ! defined $y
+                                and ! ($passes == 0 and $options{'TIMEFIRST'}))
+                        {
+                                # no month defined.
+                                if (&parse_date_only(\$t, \$y, \$m, \$d, $uk)) {
+                                        next;
+                                }
+                        }
+                        if (! defined $H and ! defined $rs) {
+                                if (&parse_time_only(\$t, \$H, \$M, \$S,
+                                        \$tz, %options))
+                                {
+                                        next;
+                                }
+                        }
+                        next if $passes == 0 and $options{'TIMEFIRST'};
+                        if (! defined $y) {
+                                if (&parse_year_only(\$t, \$y, $now, %options)) {
+                                        next;
+                                }
+                        }
+                        if (! defined $tz and ! defined $tzo and ! defined $rs
+                                and (defined $m or defined $H))
+                        {
+                                if (&parse_tz_only(\$t, \$tz, \$tzo)) {
+                                        next;
+                                }
+                        }
+                        if (! defined $H and ! defined $rs) {
+                                if (&parse_time_offset(\$t, \$rs, %options)) {
+                                        $rel = 1;
+                                        next;
+                                }
+                        }
+                        if (! defined $m and ! defined $rd and ! defined $y) {
+                                if (&parse_date_offset(\$t, $now, \$y,
+                                        \$m, \$d, \$rd, \$rs, %options))
+                                {
+                                        $rel = 1;
+                                        next;
+                                }
+                        }
+                        if (defined $M or defined $rd) {
+                                if ($t =~ s/^\s*(?:at|\@|\+)($break)//x) {
+                                        $rel = 1;
+                                        next;
+                                }
+                        }
+                        last;
+                } continue {
+                        $passes++;
+
+                }
+
+                if ($passes == 0) {
+			return (undef, "no match on time/date") 
+				if wantarray();
+			return undef;
+                }
+        }
+
+	$t =~ s/^\s+//;
+
+	if ($t ne '') {
+		# we didn't manage to eat the string
+		if ($options{WHOLE}) {
+			return (undef, "characters left over after parse")
+				if wantarray();
+			return undef 
+		}
+	}
+
+	# define a date if there isn't one already
+
+	if (! defined $y and ! defined $m and ! defined $rd) {
+		if (defined $rs or defined $H) {
+			# we do have a time.
+			if ($options{DATE_REQUIRED}) {
+				return (undef, "no date specified")
+					if wantarray();
+				return undef;
+			}
+			if (defined $rs) {
+				my $rv = $now + $rs;
+				return ($rv, $t) if wantarray();
+				return $rv;
+			}
+			$rd = 0;
+		} else {
+			return (undef, "no time specified")
+				if wantarray();
+			return undef;
+		}
+	}
+
+	if ($options{TIME_REQUIRED} && ! defined($rs) 
+		&& ! defined($H) && ! defined($rd))
+	{
+		return (undef, "no time found")
+			if wantarray();
+		return undef;
+	}
+
+	my $secs;
+	my $jd;
+
+        if (defined $rd) {
+                if (defined $rs || ! (defined($H) || defined($M) || defined($S))) {
+                        my ($j, $in, $it);
+                        my $definedrs = defined($rs) ? $rs : 0;
+                        my ($isdst_now, $isdst_then);
+                        my $r = $now + $rd * 86400 + $definedrs;
+                        #
+                        # It's possible that there was a timezone shift
+                        # during the time specified.  If so, keep the
+                        # hours the "same".
+                        #
+                        $isdst_now = (localtime($r))[8];
+                        $isdst_then = (localtime($now))[8];
+                        if (($isdst_now == $isdst_then) || $options{GMT})
+                        {
+				return ($r, $t) if wantarray();
+				return $r 
+                        }
+                }
+
+                $jd = $options{GMT}
+                        ? gm_julian_day($now)
+                        : local_julian_day($now);
+                $jd += $rd;
+        } else {
+                unless (defined $y) {
+                        if ($options{PREFER_PAST}) {
+                                my ($day, $mon011);
+                                ($day, $mon011, $y) = (&righttime($now))[3,4,5];
+
+                                $y -= 1 if ($mon011+1 < $m) ||
+                                        (($mon011+1 == $m) && ($day < $d));
+                        } elsif ($options{PREFER_FUTURE}) {
+                                my ($day, $mon011);
+                                ($day, $mon011, $y) = (&righttime($now))[3,4,5];
+                                $y += 1 if ($mon011 >= $m) ||
+                                        (($mon011+1 == $m) && ($day > $d));
+                        } else {
+                                $y = (localtime($now))[5];
+                        }
+                        $y += 1900;
+                }
+
+                $y = expand_two_digit_year($y, $now, %options)
+                        if $y < 100;
+
+                if ($options{VALIDATE}) {
+                        require Time::DaysInMonth;
+                        my $dim = Time::DaysInMonth::days_in($y, $m);
+                        if ($y < 1000 or $m < 1 or $d < 1
+                                or $y > 9999 or $m > 12 or $d > $dim)
+                        {
+				return (undef, "illegal YMD: $y, $m, $d")
+					if wantarray();
+				return undef;
+                        }
+                }
+                $jd = julian_day($y, $m, $d);
+        }
+
+	# put time into HMS
+
+	if (! defined($H)) {
+		if (defined($rd) || defined($rs)) {
+			($S, $M, $H) = &righttime($now, %options);
+		} 
+	}
+
+	my $carry;
+
+	#
+	# add in relative seconds.  Do it this way because we want to
+	# preserve the localtime across DST changes.
+	#
+
+	$S = 0 unless $S; # -w
+	$M = 0 unless $M; # -w
+	$H = 0 unless $H; # -w
+
+	if ($options{VALIDATE} and
+		($S < 0 or $M < 0 or $H < 0 or $S > 59 or $M > 59 or $H > 23)) 
+	{
+		return (undef, "illegal HMS: $H, $M, $S") if wantarray();
+		return undef;
+	}
+
+	$S += $rs if defined $rs;
+	$carry = int($S / 60) - ($S < 0 && $S % 60 && 1);
+	$S -= $carry * 60;
+	$M += $carry;
+	$carry = int($M / 60) - ($M < 0 && $M % 60 && 1);
+	$M %= 60;
+	$H += $carry;
+	$carry = int($H / 24) - ($H < 0 && $H % 24 && 1);
+	$H %= 24;
+	$jd += $carry;
+
+	$secs = jd_secondslocal($jd, $H, $M, $S);
+
+	return ($secs, $t) if wantarray();
+	return $secs;
+}
+
+sub get_ymd_from_parsedate
+{
+	my ($d,$m,$y) = (localtime(scalar parsedate(shift)))[3,4,5];
+	return ($y + 1900, ++$m, $d);
+}
 
 
 1;

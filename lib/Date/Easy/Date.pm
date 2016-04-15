@@ -125,20 +125,24 @@ sub _strptime
 sub _parsedate
 {
 	require Time::ParseDate;
-	require Time::Timezone;
-	no warnings 'redefine';
-	*orig_mkoff		= \&Time::ParseDate::mkoff;
-	*orig_tz_offset	= \&Time::ParseDate::tz_offset;
+	my $string = shift;
 
-	*Time::ParseDate::mkoff = sub { Time::Timezone::tz_local_offset() };
-	# Note: *not* *Time::Timezone::tz_offset!  Since it was already exported to the
-	# Time::ParseDate namespace, that's the one we care about.
-	*Time::ParseDate::tz_offset = sub { Time::Timezone::tz_local_offset() };
-	my $t = scalar Time::ParseDate::parsedate(shift, DATE_REQUIRED => 1);
+	# Remove any timezone specifier so we get the date as it was in that timezone.
+	# I've gathered up all timezone matching code from Time::ParseDate as of v2015.103.
+																		# matching code from Time/ParseDate.pm:
+	my $break = qr{(?:\s+|\Z|\b(?![-:.,/]\d))};												# line 67
+	$string =~ s/
+			(?:
+					[+-] \d\d:?\d\d \s+ \( "? (?: [A-Z]{1,4}[TCW56] | IDLE ) \)				# lines 424-435
+				|	GMT \s* [-+]\d{1,2}														# line 441
+				|	(?: GMT \s* )? [+-] \d\d:?\d\d											# line 452
+				|	"? (?: [A-Z]{1,4}[TCW56] | IDLE )										# line 457 (and 695-700)
+			) $break //x;
 
-	*Time::ParseDate::mkoff		= \&orig_mkoff;
-	*Time::ParseDate::tz_offset	= \&orig_tz_offset;
-	return $t;
+	# We *must* force scalar context.  Remember, parsedate called in list context also returns the
+	# "remainder" of the parsed string (which is often undef, which could wreak havoc with a call
+	# that incorporates our return value, particularly one to _mktime).
+	return scalar Time::ParseDate::parsedate($string, DATE_REQUIRED => 1);
 }
 
 
