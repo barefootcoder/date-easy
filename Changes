@@ -8,6 +8,8 @@ Revision history for Date-Easy
 
     [Distro Fixes]
     * Incorrect issues link fixed
+    * Now prints timezone info to help identify smoker problems
+      (thx Andreas Koenig (ANDK)!)
     * Added author test for parsing dates in all timezones
       (should provide better test coverage on release)
     * Marked bogusly failing datetime test as TODO
