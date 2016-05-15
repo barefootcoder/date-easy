@@ -141,6 +141,37 @@ sub quarter		{ int(shift->{impl}->_mon / 3) + 1 }					# calc quarter from (zero-
 
 sub strftime	{ shift->{impl}->strftime(@_) }
 
+
+########################
+# OVERLOADED OPERATORS #
+########################
+
+sub _op_convert
+{
+	my $operand = shift;
+	return $operand unless blessed $operand;
+	return $operand->{impl} if $operand->isa('Date::Easy::Datetime');
+	return $operand if $operand->isa('Time::Piece');
+	croak ("don't know how to handle conversion of " . ref $operand);
+}
+
+sub _result_convert
+{
+	my $func = shift;
+	return Date::Easy::Datetime->new( scalar $func->(@_) );
+}
+
+use overload
+	'""'	=>	sub { Time::Piece::cdate      (_op_convert($_[0])                           ) },
+	'<=>'	=>	sub { Time::Piece::compare    (_op_convert($_[0]), _op_convert($_[1]), $_[2]) },
+	'cmp'	=>	sub { Time::Piece::str_compare(_op_convert($_[0]), _op_convert($_[1]), $_[2]) },
+
+	'+'		=>	sub { _result_convert( \&Time::Piece::add      => (_op_convert($_[0]), _op_convert($_[1]), $_[2]) ) },
+	'-'		=>	sub { _result_convert( \&Time::Piece::subtract => (_op_convert($_[0]), _op_convert($_[1]), $_[2]) ) },
+;
+
+
+
 1;
 
 # ABSTRACT: easy datetime class
