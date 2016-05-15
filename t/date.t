@@ -6,16 +6,16 @@ use Time::Piece;
 
 my $t = Date::Easy::Date->new;
 isa_ok $t, 'Date::Easy::Date', 'ctor with no args';
-isa_ok $t, 'Time::Piece', 'inheritance test';
+isa_ok $t, 'Date::Easy::Datetime', 'inheritance test';
 
-is $t->sec, 0, "::Date truncates seconds";
-is $t->min, 0, "::Date truncates minutes";
-is $t->hour, 0, "::Date truncates hours";
+is $t->second, 0, "::Date truncates seconds";
+is $t->minute, 0, "::Date truncates minutes";
+is $t->hour,   0, "::Date truncates hours";
 
 my @tvals = localtime;
-is $t->mday, $tvals[Time::Piece::c_mday],        "default ::Date is today's day";
-is $t->_mon, $tvals[Time::Piece::c_mon],         "default ::Date is today's month";
-is $t->year, $tvals[Time::Piece::c_year] + 1900, "default ::Date is today's year";
+is $t->day,   $tvals[Time::Piece::c_mday],        "default ::Date is today's day";
+is $t->month, $tvals[Time::Piece::c_mon] + 1,     "default ::Date is today's month";
+is $t->year,  $tvals[Time::Piece::c_year] + 1900, "default ::Date is today's year";
 
 my $FMT = '%Y%m%d';
 ok $t == today, "today function matches default ctor";

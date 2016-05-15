@@ -11,7 +11,7 @@ use parent 'Exporter';
 our @EXPORT_OK = qw< date today >;
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
-use parent 'Time::Piece';
+use parent 'Date::Easy::Datetime';
 
 use Carp;
 use Time::Local;
@@ -176,8 +176,9 @@ sub new
 
 sub _mkdate
 {
-	my ($self_or_class, $epoch) = @_;
-	return scalar $self_or_class->_mktime($epoch, 0);					# always UTC
+	my ($invocant, $epoch) = @_;
+	my $class = ref $invocant || $invocant;
+	return bless Date::Easy::Datetime->new(UTC => $epoch), $class;		# always UTC
 }
 
 
