@@ -46,4 +46,23 @@ throws_ok { Date::Easy::Datetime->new(bmoogle => 0) } qr/Unrecognized timezone s
 		"proper failure for bogus zonespec";
 
 
+# convert _from_ an unknown class
+my $bmoogle = bless {}, 'Bmoogle';
+
+foreach (qw< Date::Easy::Date Date::Easy::Datetime >)
+{
+	throws_ok { $_->new($bmoogle) } qr/Don't know how to convert Bmoogle to $_/, "error on unknown conv to $_";
+	throws_ok { $_->new($bmoogle) } qr/Don't know how to convert Bmoogle to $_/, "error on unknown conv to $_";
+}
+
+
+# convert _to_ an unknown class
+
+# we don't have to worry about ::Date this time
+# it just inherits the `as` method from ::Datetime
+my $dt = now;
+my $class = 'Date::Easy::Datetime';
+throws_ok { $dt->as('Bmoogle') } qr/Don't know how to convert $class to Bmoogle/, "error on unknown conv from $class";
+
+
 done_testing;

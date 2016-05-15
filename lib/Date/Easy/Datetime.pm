@@ -97,11 +97,18 @@ sub new
 	elsif (@_ == 1)
 	{
 		$t = shift;
-		if ( blessed $t and $t->isa('Time::Piece') )
+		if ( my $conv_class = blessed $t )
 		{
-			# it's already what we were going to construct anyway;
-			# just stick it in a hash and call it a day
-			return bless { impl => $t }, $class;
+			if ( $t->isa('Time::Piece') )
+			{
+				# it's already what we were going to construct anyway;
+				# just stick it in a hashref and call it a day
+				return bless { impl => $t }, $class;
+			}
+			else
+			{
+				croak("Don't know how to convert $conv_class to $class");
+			}
 		}
 	}
 	else
@@ -125,6 +132,10 @@ sub as
 	if ($newclass eq 'Time::Piece')
 	{
 		return $self->{impl};
+	}
+	else
+	{
+		croak("Don't know how to convert " . ref( $self) . " to $newclass");
 	}
 }
 

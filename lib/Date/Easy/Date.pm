@@ -165,11 +165,15 @@ sub new
 	{
 		my ($time) = @_;
 		$time = time unless defined $time;
-		if (blessed $time)
+		if (my $conv_class = blessed $time)
 		{
 			if ( $time->isa('Time::Piece') )
 			{
 				($d, $m, $y) = ($time->mday, $time->_mon, $time->year);
+			}
+			else
+			{
+				croak("Don't know how to convert $conv_class to $class");
 			}
 		}
 		else
