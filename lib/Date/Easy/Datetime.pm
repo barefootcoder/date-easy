@@ -14,6 +14,7 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 use Carp;
 use Time::Local;
 use Time::Piece;
+use Scalar::Util 'blessed';
 
 
 # this can be modified (preferably using `local`) to use GMT/UTC as the default
@@ -96,6 +97,12 @@ sub new
 	elsif (@_ == 1)
 	{
 		$t = shift;
+		if ( blessed $t and $t->isa('Time::Piece') )
+		{
+			# it's already what we were going to construct anyway;
+			# just stick it in a hash and call it a day
+			return bless { impl => $t }, $class;
+		}
 	}
 	else
 	{
@@ -109,6 +116,17 @@ sub new
 sub is_local {  shift->{impl}->[Time::Piece::c_islocal] }
 sub is_gmt   { !shift->{impl}->[Time::Piece::c_islocal] }
 *is_utc = \&is_gmt;
+
+
+sub as
+{
+	my ($self, $newclass) = @_;
+
+	if ($newclass eq 'Time::Piece')
+	{
+		return $self->{impl};
+	}
+}
 
 
 sub year		{ shift->{impl}->year }
