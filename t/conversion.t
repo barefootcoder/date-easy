@@ -12,9 +12,10 @@ use lib File::Spec->catdir(dirname(abs_path($0)), 'lib');
 use DateEasyTestUtil qw< is_true is_false >;
 
 
-# test date: 3 Feb, 2001  04:05:06
+# test date: 3 Feb, 2001  [04:05:06]
+my $d  = Date::Easy::Date    ->new(2001, 2, 3);
 my $dt = Date::Easy::Datetime->new(2001, 2, 3, 4, 5, 6);
-my ($class, $epoch, $tp, $dt_tp);
+my ($class, $epoch, $tp, $d_tp, $dt_tp);
 
 
 # datetime: convert to Time::Piece
@@ -48,6 +49,34 @@ $dt_tp = Date::Easy::Datetime->new($tp);
 isa_ok $dt_tp, 'Date::Easy::Datetime', "datetime converted from $class";
 is_true $dt_tp->is_gmt, "GMT flag preserved after conversion from Time::Piece";
 is $dt_tp->epoch, $tp->epoch, "epoch seconds correct after conversion from Time::Piece";
+
+
+# date: convert to Time::Piece
+$class = 'Time::Piece';
+$tp = $d->as($class);
+isa_ok $tp, $class, "converted $class";
+
+is $tp->year, 2001, "$class from date year is correct";
+is $tp->mon,  2,    "$class from date month is correct";
+is $tp->mday, 3,    "$class from date day is correct";
+is $tp->hour, 0,    "$class from date hour is correct";
+is $tp->min,  0,    "$class from date minute is correct";
+is $tp->sec,  0,    "$class from date second is correct";
+
+
+# date: convert from Time::Piece
+$class = 'Time::Piece';
+# same epoch as above, including time (which should be thrown away)
+
+$tp = gmtime $epoch;
+isa_ok $tp, 'Time::Piece', 'sanity check (date)';
+$d_tp = Date::Easy::Date->new($tp);
+isa_ok $d_tp, 'Date::Easy::Datetime', "datetime converted from $class";
+is_true $d_tp->is_gmt, "GMT flag always on for dates";
+is $d_tp->strftime("%Y/%m/%d"), "1998/09/08", "date correct after conversion from Time::Piece";
+is $d_tp->hour,   0, "time zero after conversion from Time::Piece (hour)";
+is $d_tp->minute, 0, "time zero after conversion from Time::Piece (min)";
+is $d_tp->second, 0, "time zero after conversion from Time::Piece (sec)";
 
 
 done_testing;

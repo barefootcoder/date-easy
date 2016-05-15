@@ -15,6 +15,7 @@ use parent 'Date::Easy::Datetime';
 
 use Carp;
 use Time::Local;
+use Scalar::Util 'blessed';
 
 
 ##############################
@@ -164,8 +165,18 @@ sub new
 	{
 		my ($time) = @_;
 		$time = time unless defined $time;
-		($d, $m, $y) = (localtime $time)[3..5];		# `Date`s are parsed relative to local time ...
-		$y += 1900;									# (timelocal/timegm does odd things w/ 2-digit dates)
+		if (blessed $time)
+		{
+			if ( $time->isa('Time::Piece') )
+			{
+				($d, $m, $y) = ($time->mday, $time->_mon, $time->year);
+			}
+		}
+		else
+		{
+			($d, $m, $y) = (localtime $time)[3..5];	# `Date`s are parsed relative to local time ...
+			$y += 1900;								# (timelocal/timegm does odd things w/ 2-digit dates)
+		}
 	}
 
 	my $truncated_date =
