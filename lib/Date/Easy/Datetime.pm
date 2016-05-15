@@ -11,10 +11,9 @@ use parent 'Exporter';
 our @EXPORT_OK = qw< datetime now >;
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
-use parent 'Time::Piece';
-
 use Carp;
 use Time::Local;
+use Time::Piece;
 
 
 # this can be modified (preferably using `local`) to use GMT/UTC as the default
@@ -103,12 +102,12 @@ sub new
 		croak("Illegal number of arguments to datetime()");
 	}
 
-	return scalar $class->_mktime($t, $ZONE_FLAG{$zonespec});
+	bless { impl => scalar Time::Piece->_mktime($t, $ZONE_FLAG{$zonespec}) }, $class;
 }
 
 
-sub is_local {  shift->[Time::Piece::c_islocal] }
-sub is_gmt   { !shift->[Time::Piece::c_islocal] }
+sub is_local {  shift->{impl}->[Time::Piece::c_islocal] }
+sub is_gmt   { !shift->{impl}->[Time::Piece::c_islocal] }
 *is_utc = \&is_gmt;
 
 

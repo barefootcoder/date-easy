@@ -1,7 +1,6 @@
 use Test::Most 0.25;
 
 use Date::Easy;
-use Time::Piece;
 
 # local test modules
 use File::Spec;
@@ -14,20 +13,6 @@ use DateEasyTestUtil qw< compare_times >;
 my $t;
 lives_ok { $t = Date::Easy::Datetime->new } "basic ctor call";
 isa_ok $t, 'Date::Easy::Datetime', 'ctor with no args';
-isa_ok $t, 'Time::Piece', 'inheritance test';
-
-# this is mostly unnecessary, because it tests Time::Piece moreso than Date::Easy::Datetime
-# but at least it guarantees that we don't bork anything that's already working
-my @tvals = localtime $t->epoch;
-is $t->sec,   $tvals[Time::Piece::c_sec],         "default ::Datetime has today's seconds";
-is $t->min,   $tvals[Time::Piece::c_min],         "default ::Datetime has today's minutes";
-is $t->hour,  $tvals[Time::Piece::c_hour],        "default ::Datetime has today's hour";
-is $t->mday,  $tvals[Time::Piece::c_mday],        "default ::Datetime has today's day";
-is $t->_mon,  $tvals[Time::Piece::c_mon],         "default ::Datetime has today's month";
-is $t->year,  $tvals[Time::Piece::c_year] + 1900, "default ::Datetime has today's year";
-is $t->_wday, $tvals[Time::Piece::c_wday],        "default ::Datetime has today's weekday";
-is $t->yday,  $tvals[Time::Piece::c_yday],        "default ::Datetime has today's day of year";
-is $t->isdst, $tvals[Time::Piece::c_isdst],       "default ::Datetime has today's DST flag";
 
 # We'd like to test equivalence between the following 3 things.
 # Unfortunately, we have no way to guarantee that the clock doesn't rollover to a new second in
