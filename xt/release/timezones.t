@@ -17,7 +17,7 @@ foreach (`find $zoneinfo -type f`)
 	tzset();
 
 	my $td = date("04/95 00:22:12 PDT");
-	is join('-', $td->year, $td->mon, $td->mday), '1995-4-1', "simple parse in timezone: $_";
+	is join('-', $td->year, $td->month, $td->day), '1995-4-1', "simple parse in timezone: $_";
 }
 
 

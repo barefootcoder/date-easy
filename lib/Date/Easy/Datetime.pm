@@ -111,6 +111,17 @@ sub is_gmt   { !shift->{impl}->[Time::Piece::c_islocal] }
 *is_utc = \&is_gmt;
 
 
+sub year		{ shift->{impl}->year }
+sub month		{ shift->{impl}->mon }
+sub day			{ shift->{impl}->mday }
+sub hour		{ shift->{impl}->hour }
+sub minute		{ shift->{impl}->min }
+sub second		{ shift->{impl}->sec }
+sub epoch		{ shift->{impl}->epoch }
+sub day_of_week	{ shift->{impl}->day_of_week || 7 }						# change Sunday from 0 to 7
+sub quarter		{ int(shift->{impl}->_mon / 3) + 1 }					# calc quarter from (zero-based) month
+
+sub strftime	{ shift->{impl}->strftime(@_) }
 
 1;
 
