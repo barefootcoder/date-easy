@@ -2,10 +2,15 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+	[Interface Changes]
+	* ::Date and ::Datetime now have accessors that follow the UI of
+	  DateTime rather than Time::Piece
+	* ::Date and ::Datetime no longer inherit from Time::Piece
+
 0.01_01   2016-04-16 18:52:35-07:00 America/Los_Angeles (TRIAL RELEASE)
 
     [Bug Fixes]
-    * correct the bug whereby handing off to Time::ParseDate::parsedate
+    * Correct the bug whereby handing off to Time::ParseDate::parsedate
       used the wrong DST flag
 
     [Distro Fixes]
