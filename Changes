@@ -7,6 +7,10 @@ Revision history for Date-Easy
 	  DateTime rather than Time::Piece
 	* ::Date and ::Datetime no longer inherit from Time::Piece
 
+    [Distro Fixes]
+    * Fixed bug where List::Util might be too low a version during testing
+      github #5 (thx Slaven Rezić (SREZIC))
+
 0.01_01   2016-04-16 18:52:35-07:00 America/Los_Angeles (TRIAL RELEASE)
 
     [Bug Fixes]

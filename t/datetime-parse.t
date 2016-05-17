@@ -6,7 +6,7 @@ use Time::Local;
 use Date::Parse;
 use Time::ParseDate;
 
-use List::Util 1.29 qw< pairs >;					# minimum version for pairs
+use List::Util 1.39 qw< pairs >;					# minimum version for pairs returning objects
 
 # local test modules
 use File::Spec;
