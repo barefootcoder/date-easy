@@ -2,12 +2,14 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
-	[Interface Changes]
-	* ::Date and ::Datetime now have accessors that follow the UI of
-	  DateTime rather than Time::Piece
-	* ::Date and ::Datetime no longer inherit from Time::Piece
+    [Interface Changes]
+    * ::Date and ::Datetime now have accessors that follow the UI of
+      DateTime rather than Time::Piece
+    * ::Date and ::Datetime no longer inherit from Time::Piece
 
     [Distro Fixes]
+    * Fixed multiple cases of datetimes not matching due to clock rolling over
+      github #4 (thx Slaven Rezić (SREZIC))
     * Fixed bug where List::Util might be too low a version during testing
       github #5 (thx Slaven Rezić (SREZIC))
 

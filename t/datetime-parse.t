@@ -13,7 +13,7 @@ use File::Spec;
 use Cwd 'abs_path';
 use File::Basename;
 use lib File::Spec->catdir(dirname(abs_path($0)), 'lib');
-use DateEasyTestUtil qw< compare_times >;
+use DateEasyTestUtil qw< compare_times generate_times_and_compare >;
 use DateParseTests qw< %DATE_PARSE_TESTS _date_parse_has_timezone >;
 use TimeParseDateTests qw< @TIME_PARSE_DATE_TESTS >;
 
@@ -81,27 +81,39 @@ foreach (pairs @TIME_PARSE_DATE_TESTS)
 	# so skip those
 	next if defined str2time($str);
 
-	# Assigning this to a scalar forces scalar context, obviously.  However, if you try to put this
-	# directly into a call to `is` or `_mktime` or somesuch, you would have to use `scalar`.  Remember,
-	# parsedate called in array context returns the "remainder" of the parsed string (which would
-	# always be undef, which could wreak havoc with a call, particularly one to _mktime).
-	my $local_secs = parsedate($str);
-	my $gmt_secs = parsedate($str, GMT => 1);
+	# In the calls to parsedate() below, we have to force scalar context.  Remember, parsedate
+	# called in list context also returns the "remainder" of the parsed string (which would always
+	# be undef, which could wreak havoc with a function call which just used the rerturn value(s),
+	# particularly one to _mktime).
 
 	# If parsedate() won't parse this (e.g. because it requires PREFER_PAST or PREFER_FUTURE, which
 	# we're not going to supply, or because it's just expected to fail), skip this test.
-	next unless defined $local_secs;
+	next unless defined scalar parsedate($str);
+
+	# We have to use `generate_times_and_compare` as opposed to `compare_times`, because some of our
+	# test values are relative, meaning relative to the current time, meaning that if the clock
+	# happens to roll over between the call to `datetime` and the call to `parsedate`, the seconds
+	# won't match.  Which is exactly what `generate_times_and_compare` is designed to fix.
 
 	# local
-	lives_ok { $t = datetime($str) } "parse survival: $str";
-	compare_times($t, local => $local_secs, "successful default parse: $str");
+	generate_times_and_compare
+	{
+		lives_ok { $t = datetime($str) } "parse survival (local): $str";
+		$t, local => scalar parsedate($str)
+	}
+		"successful default parse: $str";
 	# and UTC
-	lives_ok { $t = datetime(UTC => $str) } "parse survival: $str";
-	compare_times($t, UTC => $gmt_secs, "successful UTC parse: $str");
+	generate_times_and_compare
+	{
+		lives_ok { $t = datetime(UTC => $str) } "parse survival (UTC): $str";
+		$t, UTC => scalar parsedate($str, GMT => 1)
+	}
+		"successful UTC parse: $str";
 	# just to be safe
 	{
 		local $Date::Easy::Datetime::DEFAULT_ZONE = 'UTC';
-		compare_times(datetime($str), UTC => $gmt_secs, "successful default UTC parse: $str");
+		generate_times_and_compare { datetime($str), UTC => scalar parsedate($str, GMT => 1) }
+				"successful default UTC parse: $str";
 	}
 }
 

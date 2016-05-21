@@ -7,32 +7,20 @@ use File::Spec;
 use Cwd 'abs_path';
 use File::Basename;
 use lib File::Spec->catdir(dirname(abs_path($0)), 'lib');
-use DateEasyTestUtil qw< compare_times >;
+use DateEasyTestUtil qw< compare_times generate_times_and_compare >;
 
 
 my $t;
 lives_ok { $t = Date::Easy::Datetime->new } "basic ctor call";
 isa_ok $t, 'Date::Easy::Datetime', 'ctor with no args';
 
-# We'd like to test equivalence between the following 3 things.
-# Unfortunately, we have no way to guarantee that the clock doesn't rollover to a new second in
-# between assigning two of them.  So we're going to try up to, say, 10 times.  It's probably safe to
-# say after that many attempts any continued discrepancy is not due to random chance.
-my ($now_ctor, $now_func, $now_time);
-my $success = 0;
-for (1..10)
-{
-	$now_ctor = Date::Easy::Datetime->new;
-	$now_func = now;
-	$now_time = time;
-	if ($now_ctor->epoch == $now_func->epoch && $now_func->epoch == $now_time)
-	{
-		$success = 1;
-		last;
-	}
-}
-is $success, 1, "now function matches default ctor matches return from time()"
-	or diag("ctor: ", $now_ctor->epoch, " func: ", $now_func->epoch, " time: ", $now_time);
+# We're testing equivalence between 3 things.  But because we must use our special test function
+# which helps us avoid failures due to timing issues, we can only test two at a time.  So we'll test
+# the first and second, then test the first and third, then we'll trust the transitive laws of
+# mathematics to believe that the second and the third are also equivalent.
+
+generate_times_and_compare { Date::Easy::Datetime->new, now           } "default ctor matches now function";
+generate_times_and_compare { Date::Easy::Datetime->new, local => time } "default ctor matches return from time()";
 
 
 # with 6 args, ctor should just build that date
