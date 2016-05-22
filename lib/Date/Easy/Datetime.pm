@@ -92,7 +92,8 @@ sub new
 	{
 		my ($y, $m, $d, $H, $M, $S) = @_;
 		--$m;										# timelocal/timegm will expect month as 0..11
-		$t = $zonespec eq 'local' ? timelocal($S, $M, $H, $d, $m, $y) : timegm($S, $M, $H, $d, $m, $y);
+		$t = eval { $zonespec eq 'local' ? timelocal($S, $M, $H, $d, $m, $y) : timegm($S, $M, $H, $d, $m, $y) };
+		croak("Illegal datetime: $y/" . ($m + 1) . "/$d $H:$M:$S") unless defined $t;
 	}
 	elsif (@_ == 1)
 	{

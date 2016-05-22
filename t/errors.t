@@ -7,10 +7,11 @@ use Date::Easy;
 
 my %BAD_DATES =
 (
-	28999999		=>	qr/Illegal date/,			# looks like a datestring, but not valid date
-	10000000		=>	qr/Illegal date/,			# looks like a datestring, but not valid date
-	'06:43am'		=>	qr/Illegal date/,			# only a time
-	bmoogle			=>	qr/Illegal date/,			# just completely bogus
+	28999999		=>	qr/Illegal date/,								# looks like a datestring, but not valid date
+	10000000		=>	qr/Illegal date/,								# looks like a datestring, but not valid date
+	'2001-02-29'	=>	qr|Illegal date: 2001/2/29|,					# day doesn't exist (not a leap year)
+	'06:43am'		=>	qr/Illegal date/,								# only a time
+	bmoogle			=>	qr/Illegal date/,								# just completely bogus
 );
 
 my $t;
@@ -28,6 +29,9 @@ foreach (qw<
 {
 	throws_ok { $t = datetime($_) } qr/Illegal datetime/, "found datetime error: $_" or diag("got datetime: $t");
 }
+
+throws_ok { Date::Easy::Datetime->new(2001, 2, 29, 0, 0, 0) }
+		qr|Illegal datetime: 2001/2/29 0:0:0|, "catches exception from timegm/timelocal";
 
 
 # bad number of args when constructing a datetime

@@ -185,7 +185,7 @@ sub new
 
 	my $truncated_date =
 			eval { timegm( 0,0,0, $d,$m,$y ) };		# ... but stored as UTC
-	croak("Illegal date: $y/$m/$d") unless defined $truncated_date;
+	croak("Illegal date: $y/" . ($m + 1) . "/$d") unless defined $truncated_date;
 	return $class->_mkdate($truncated_date);
 }
 
