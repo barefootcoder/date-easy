@@ -13,7 +13,7 @@ use File::Spec;
 use Cwd 'abs_path';
 use File::Basename;
 use lib File::Spec->catdir(dirname(abs_path($0)), 'lib');
-use DateEasyTestUtil qw< compare_times >;
+use DateEasyTestUtil qw< is_32bit compare_times >;
 use DateParseTests qw< %DATE_PARSE_TESTS _date_parse_remove_timezone >;
 use TimeParseDateTests qw< @TIME_PARSE_DATE_TESTS get_ymd_from_parsedate >;
 
@@ -33,10 +33,17 @@ my %TEST_DATES =
 );
 
 my $t;
+my $on_32bit_machine = is_32bit();
 foreach (keys %TEST_DATES)
 {
-	lives_ok { $t = date($_) } "parse survival: $_";
-	compare_times($t, $TEST_DATES{$_}, "successful parse: $_");
+	TODO:
+	{
+		my $expected = $TEST_DATES{$_};
+		local $TODO = "out of range for 32-bit machines"
+				if $on_32bit_machine and ( $expected < '1901-99-99' or $expected > '2038-00-00' );
+		lives_ok { $t = date($_) } "parse survival: $_";
+		compare_times($t, $expected, "successful parse: $_");
+	}
 }
 
 

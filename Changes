@@ -10,6 +10,8 @@ Revision history for Date-Easy
     [Distro Fixes]
     * Fixed multiple cases of datetimes not matching due to clock rolling over
       github #4 (thx Slaven Rezić (SREZIC))
+    * Fixed out-of-range tests on 32-bit machines
+      github #3 (thx Slaven Rezić (SREZIC))
     * Fixed bug where List::Util might be too low a version during testing
       github #5 (thx Slaven Rezić (SREZIC))
 

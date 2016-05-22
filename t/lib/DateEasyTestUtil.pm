@@ -4,11 +4,23 @@ use strict;
 use warnings;
 
 use parent 'Exporter';
-our @EXPORT_OK = qw< compare_times generate_times_and_compare is_true is_false >;
+our @EXPORT_OK = qw< is_32bit compare_times generate_times_and_compare is_true is_false >;
 
 use Carp;
 use Test::More;
 use Test::Builder;
+
+
+# Hopefully tells us whether we're running on a 32-bit machine or not.  No arguments, returns true
+# or false.  Technically speaking, this checks the size of pointers, which I suppose might not be
+# the same as the size of a time_t.  But hopefully this is close enough.
+# Idea stolen from PerlMonks (thanks Tux (H.Merijn)!):
+# http://www.perlmonks.org/?node_id=1054237
+sub is_32bit
+{
+	require Config;
+	return $Config::Config{ptrsize} == 4;
+}
 
 
 # Two functions to compare times.  See below for full details.

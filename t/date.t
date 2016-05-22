@@ -25,7 +25,7 @@ is today->strftime($FMT), localtime->strftime($FMT), "today function actually re
 
 # with 3 args, ctor should just build that date
 
-my @TRIPLE_ARGS = qw< 19940203 20010905 19980908 19691231 20520229 >;
+my @TRIPLE_ARGS = qw< 19940203 20010905 19980908 19691231 20360229 >;
 foreach (@TRIPLE_ARGS)
 {
 	my ($y, $m, $d) = /^(\d{4})(\d{2})(\d{2})$/;

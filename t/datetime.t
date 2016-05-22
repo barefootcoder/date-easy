@@ -26,7 +26,7 @@ generate_times_and_compare { Date::Easy::Datetime->new, local => time } "default
 # with 6 args, ctor should just build that date
 
 my $FMT = '%Y%m%d%H%M%S';
-my @SEXTUPLE_ARGS = qw< 19940203103223 20010905134816 19980908170139 19691231235959 20520229000000 >;
+my @SEXTUPLE_ARGS = qw< 19940203103223 20010905134816 19980908170139 19691231235959 20360229000000 >;
 foreach (@SEXTUPLE_ARGS)
 {
 	my @args = /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/;
