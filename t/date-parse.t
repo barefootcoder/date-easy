@@ -40,7 +40,7 @@ foreach (keys %TEST_DATES)
 	{
 		my $expected = $TEST_DATES{$_};
 		local $TODO = "out of range for 32-bit machines"
-				if $on_32bit_machine and ( $expected < '1901-99-99' or $expected > '2038-00-00' );
+				if $on_32bit_machine and ( $expected le '1901-99-99' or $expected ge '2038-00-00' );
 		lives_ok { $t = date($_) } "parse survival: $_";
 		compare_times($t, $expected, "successful parse: $_");
 	}
