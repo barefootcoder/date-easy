@@ -151,7 +151,16 @@ sub epoch		{ shift->{impl}->epoch }
 sub day_of_week	{ shift->{impl}->day_of_week || 7 }						# change Sunday from 0 to 7
 sub quarter		{ int(shift->{impl}->_mon / 3) + 1 }					# calc quarter from (zero-based) month
 
-sub strftime	{ shift->{impl}->strftime(@_) }
+sub strftime
+{
+	my ($self, $format) = @_;
+	return $self->{impl}->strftime unless defined $format;
+
+	# Handle the %s format specifier ourselves because otherwise our users may get a nasty shock.
+	# See https://github.com/rjbs/Time-Piece/issues/24 for full details.
+	$format =~ s/(?<!%)%s/$self->epoch/eg;
+	return $self->{impl}->strftime($format);
+}
 
 
 ########################
