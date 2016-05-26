@@ -22,6 +22,8 @@ Revision history for Date-Easy
       github #3 (thx Slaven Rezić (SREZIC))
     * Fixed bug where List::Util might be too low a version during testing
       github #5 (thx Slaven Rezić (SREZIC))
+    * Removed check for "%p" in `strftime` test because it's locale-specific
+      github #7 (thx Slaven Rezić (SREZIC))
 
 0.01_01   2016-04-16 18:52:35-07:00 America/Los_Angeles (TRIAL RELEASE)
 
