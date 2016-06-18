@@ -184,7 +184,7 @@ our @EXPORT_OK = qw< %DATE_PARSE_TESTS _date_parse_has_timezone _date_parse_remo
 # Some subs to help us deal with timezones.
 # These are exported too.
 
-my $TIMEZONE_REGEX = qr/ ( [+-] \d{1,2} :? \d{2} | [A-Z]{3} \h* ( \d{4} )? | [+-] \d{4} \h \( [A-Z]{3} \) | Z ) $/x;
+my $TIMEZONE_REGEX = qr/ ( [+-] \d{1,2} :? \d{2} | [A-Z]{3} \s* ( \d{4} )? | [+-] \d{4} \s \( [A-Z]{3} \) | Z ) $/x;
 
 sub _date_parse_has_timezone
 {
