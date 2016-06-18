@@ -148,6 +148,7 @@ sub hour		{ shift->{impl}->hour }
 sub minute		{ shift->{impl}->min }
 sub second		{ shift->{impl}->sec }
 sub epoch		{ shift->{impl}->epoch }
+sub time_zone	{ shift->{impl}->strftime('%Z') }
 sub day_of_week	{ shift->{impl}->day_of_week || 7 }						# change Sunday from 0 to 7
 sub quarter		{ int(shift->{impl}->_mon / 3) + 1 }					# calc quarter from (zero-based) month
 

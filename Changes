@@ -2,6 +2,9 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+    [New Features]
+    * New `time_zone` method
+
     [Distro Fixes]
     * Stop using `\h` in test regexen because 5.8 doesn't recognize it
 
