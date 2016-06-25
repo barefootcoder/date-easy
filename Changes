@@ -8,6 +8,9 @@ Revision history for Date-Easy
     [Distro Fixes]
     * Stop using `\h` in test regexen because 5.8 doesn't recognize it
 
+    [Docs]
+    * Added basic POD
+
 0.01_03   2016-05-25 22:43:31PDT-0700 America/Los_Angeles (TRIAL RELEASE)
 
     [Bug Fixes]

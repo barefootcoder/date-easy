@@ -222,5 +222,153 @@ sub subtract
 
 1;
 
+
+
 # ABSTRACT: easy date class
 # COPYRIGHT
+
+
+=head1 SYNOPSIS
+
+    use Date::Easy::Date ':all';
+
+    # guaranteed to have a time of midnight
+    my $d = date("3-Sep-1940");
+
+    # addition and subtraction work in increments of days
+    my $tomorrow = today + 1;
+    my $last_week = today - 7;
+
+    my $yr = $d->year;
+    my $mo = $d->month;
+    my $da = $d->day;
+    my $ep = $d->epoch;
+    my $qr = $d->quarter;
+    my $dw = $d->day_of_week;
+
+    say $d->strftime("%d/%m/%Y");
+
+    my $tp = $d->as('Time::Piece');
+
+
+=head1 DESCRIPTION
+
+A Date::Easy::Date object is really just a L<Date::Easy::Datetime> object whose time portion is
+always guaranteed to be midnight.  In typical usage, you will either use the C<date> constructor to
+convert a human-readable string to a date, or the C<today> function to return today's date.  Both
+are exported with the C<:all> tag; nothing is exported by default.
+
+Arithmetic operators (plus and minus) either add or subtract days to or from the date object.  All
+methods are inherited from Date::Easy::Datetime.
+
+Like their underlying datetime objects, date objects are immutable.
+
+See L<Date::Easy> for more general usage notes.
+
+
+=head1 USAGE
+
+=head2 Constructors
+
+=head3 Date::Easy::Date->new
+
+Returns the same as L</today>.
+
+=head3 Date::Easy::Date->new($e)
+
+Takes the given epoch seconds, turns it into a datetime (in the local timezone), then throws away
+the time portion and constructs a date object with the remainder.
+
+=head3 Date::Easy::Date->new($y, $m, $d)
+
+Takes the given year, month, and day, and turns it into a date object.  Month and day are
+human-centric (i.e., 1-based, not 0-based).  Year should probably be a 4-digit year; if you pass in
+a 2-digit year, you get whatever century C<timegm> thinks you should get, which may or may not be
+what you expected.
+
+=head3 Date::Easy::Date->new($obj)
+
+If the sole argument to C<new> is a blessed object, attempts to convert that object to a date.
+Currently the only type of object that can be successfully converted is a L<Time::Piece>.
+
+=head3 today
+
+Returns the current date (in the local timezone).
+
+=head3 date($string)
+
+Takes the human-readable string and converts it to a date using the following heuristics:
+
+=over 4
+
+=item *
+
+If the string consists of exactly 8 digits, and the first two digits are between "10" and "28"
+(inclusive), treats it as a compact datestring in the form YYYYMMDD.  Splits it up and passes year,
+month, and day to C<new>.
+
+=item *
+
+Otherwise, if the string consists of nothing but digits (including an optional leading negative
+sign), treats it as a number of epoch seconds and passes it to C<new>.
+
+=item *
+
+Otherwise, if the string contains no digits at all, removes any timezone specifier, then passes it
+to L<Time::ParseDate>'s C<parsedate> function.  If the result is defined, passes the resulting epoch
+seconds to C<new>.
+
+=item *
+
+Otherwise if the string contains some digits, passes it to L<Date::Parse>'s C<strptime> function.
+If the resulting six values are defined and in the proper ranges, passes the year, month, and day to
+C<new>.
+
+=item *
+
+Otherwise if the results of calling C<strptime> are unsatisfactory, removes any timezone specifier,
+then passes it to L<Time::ParseDate>'s C<parsedate> function.  If the result is defined, passes the
+resulting epoch seconds to C<new>.
+
+=item *
+
+If C<parsedate> returns C<undef> (in either position), throws an "Illegal date" exception.
+
+=back
+
+Though this sounds complicated, most of the time it just does what you meant and you don't need to
+think about it.
+
+=head2 Accessors
+
+All accessors are inherited from L<Date::Easy::Datetime>, so refer to those docs.  Note that
+C<hour>, C<minute>, and C<second> will always return 0 for a date object, and C<time_zone> will
+always return 'UTC'.  Likewise, C<is_local> always returns false and C<is_utc> (and its alias
+C<is_gmt>) always return true.
+
+=head2 Other Methods
+
+All other methods are also inherited from L<Date::Easy::Datetime>, so refer to those docs.
+
+=head2 Overloaded Operators
+
+=head3 Addition
+
+You can add an integer value to a date object.  It adds that number of days and returns a new date
+object.  The original date is not modified.
+
+=head3 Subtraction
+
+You can subtract an integer value from a date object.  It subtracts that number of days and returns
+a new date object.  The original date is not modified.
+
+
+=head1 BUGS, CAVEATS and NOTES
+
+Because a number like "20090120" can be either a compact datestring (20-Jan-2009) or  a valid number
+of epoch seconds (21-Aug-1970 12:35:20), there is a range of epoch seconds that you cannot pass in
+via C<date>.  That range is 26-Apr-1970 17:46:40 to 2-Dec-1970 15:33:19.
+
+Any timezone portion specified in a string passed to C<date> is completely ignored.
+
+See also the "Limitations" section in C<Date::Easy>.
