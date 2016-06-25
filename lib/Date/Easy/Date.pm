@@ -201,17 +201,17 @@ sub _mkdate
 # numbers added to a ::Date are days
 
 use overload
-		'+' => \&add,
-		'-' => \&subtract;
+		'+' => \&_add,
+		'-' => \&_subtract;
 
-sub add
+sub _add
 {
 	my ($self, $rhs) = @_;
 
 	return $self->_mkdate($self->epoch + 86_400 * $rhs);
 }
 
-sub subtract
+sub _subtract
 {
 	my ($self, $rhs) = @_;
 
