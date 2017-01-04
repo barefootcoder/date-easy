@@ -33,4 +33,9 @@ warning_is { $str = $dt->strftime } undef, "no uninitialized warning on empty fo
 like $str, qr/^\w+, 03 \w+ 2001 04:05:06 UTC$/, "empty format produces default format";
 
 
+# ISO 8601 format
+is $dt->iso8601, "2001-02-03T04:05:06", "shortcut for ISO 8601 formatting works";
+is $dt->iso,     "2001-02-03T04:05:06", "short alias for ISO 8601 formatting works";
+
+
 done_testing;

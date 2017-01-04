@@ -163,6 +163,9 @@ sub strftime
 	return $self->{impl}->strftime($format);
 }
 
+sub iso8601		{ shift->{impl}->datetime }
+*iso = \&iso8601;
+
 
 ########################
 # OVERLOADED OPERATORS #
@@ -233,6 +236,7 @@ use overload
     my $dw = $dt->day_of_week;
 
     say $dt->strftime("%Y-%m-%dT%H:%M:%S%z");
+    say $dt->iso8601;
 
     my $tp = $dt->as('Time::Piece');
 
@@ -432,6 +436,14 @@ Returns the quarter of the year, based on the month (1 - 4).
 =head3 strftime($fmt)
 
 Calls L<Time::Piece>'s C<strftime>.  See those docs for full details.
+
+=head3 iso8601
+
+Calls L<Time::Piece>'s C<datetime>, which produces an ISO 8601 formatted datetime.
+
+=head3 iso
+
+Alias for L</iso8601>, in case you can never remember the exact digits (like me).
 
 =head3 as($classname)
 
