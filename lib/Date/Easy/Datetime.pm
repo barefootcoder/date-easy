@@ -141,6 +141,8 @@ sub as
 }
 
 
+# ACCESSORS
+
 sub year		{ shift->{impl}->year }
 sub month		{ shift->{impl}->mon }
 sub day			{ shift->{impl}->mday }
@@ -151,6 +153,9 @@ sub epoch		{ shift->{impl}->epoch }
 sub time_zone	{ shift->{impl}->strftime('%Z') }
 sub day_of_week	{ shift->{impl}->day_of_week || 7 }						# change Sunday from 0 to 7
 sub quarter		{ int(shift->{impl}->_mon / 3) + 1 }					# calc quarter from (zero-based) month
+
+
+# FORMATTERS
 
 sub strftime
 {
@@ -165,6 +170,11 @@ sub strftime
 
 sub iso8601		{ shift->{impl}->datetime }
 *iso = \&iso8601;
+
+
+# MATH METHODS
+
+sub add_months	{ shift->{impl}->add_months(@_) }
 
 
 ########################
@@ -215,6 +225,9 @@ use overload
     # addition and subtraction work in increments of seconds
     my $this_time_yesterday = now - 60*60*24;
     my $after_30_minutes = now + 30 * 60;
+    # or can add or subtract months
+    my $next_month = now->add_months(1);
+    my $last_month = now->add_months(-1);
 
     # if you prefer UTC
     my $utc = datetime(UTC => "2016-03-07 01:22:16PST-0800");
@@ -450,6 +463,13 @@ Alias for L</iso8601>, in case you can never remember the exact digits (like me)
 Converts the datetime to the given class, if possible.  Currently, the only acceptable classname is
 L<Time::Piece>.  (Since a Date::Easy::Datetime is stored internally as a Time::Piece object, this is
 a trivial lookup.)
+
+=head3 add_months($num)
+
+Calls L<Time::Piece>'s C<add_months> to add a given number of months and return a new datetime
+object.  The original datetime is not modified.  Supply a negative number to subtract months.  See
+the L<Time::Piece> docs for full details, especially as regards what happens when you try to add
+months to dates at the ends of months.
 
 =head2 Overloaded Operators
 

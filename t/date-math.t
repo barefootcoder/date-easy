@@ -51,4 +51,12 @@ isa_ok $d  + 1, 'Date::Easy::Date', 'addition result';
 isa_ok $d2 - 5, 'Date::Easy::Date', 'subtraction result';
 
 
+# adding months is, obviously harder
+
+$d2 = $d->add_months(2);
+is $d2->strftime($FMT), '03/04/2001', 'month addition';
+$d2 = $d->add_months(-2);
+is $d2->strftime($FMT), '11/04/2000', 'month subtraction';
+
+
 done_testing;

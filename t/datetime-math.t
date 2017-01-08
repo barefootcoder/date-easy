@@ -43,4 +43,20 @@ isa_ok $dt1 + 30, 'Date::Easy::Datetime', 'addition result';
 isa_ok $dt3 - 30, 'Date::Easy::Datetime', 'subtraction result';
 
 
+# adding months is, obviously, harder
+
+my $dt4 = $dt3->add_months(2);
+is $dt4->strftime($FMT), '2010/03/01 13:06:30', 'month addition';
+$dt4 = $dt3->add_months(-2);
+is $dt4->strftime($FMT), '2009/11/01 13:06:30', 'month subtraction';
+
+# cross a DST boundary
+$dt4 = $dt3->add_months(3);
+is $dt4->strftime($FMT), '2010/04/01 13:06:30', 'month addition across DST boundary';
+
+# cross a year boundary
+$dt4 = $dt3->add_months(13);
+is $dt4->strftime($FMT), '2011/02/01 13:06:30', 'month addition across year boundary';
+
+
 done_testing;
