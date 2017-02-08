@@ -429,11 +429,11 @@ Returns the day of the week from 1 (Monday) to 7 (Sunday).
 
 Returns the quarter of the year, based on the month (1 - 4).
 
-=head3 strftime
+=head3 strftime($fmt)
 
 Calls L<Time::Piece>'s C<strftime>.  See those docs for full details.
 
-=head3 as
+=head3 as($classname)
 
 Converts the datetime to the given class, if possible.  Currently, the only acceptable classname is
 L<Time::Piece>.  (Since a Date::Easy::Datetime is stored internally as a Time::Piece object, this is
