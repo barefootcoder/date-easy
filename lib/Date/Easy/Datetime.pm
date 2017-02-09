@@ -128,15 +128,20 @@ sub is_gmt   { !shift->{impl}->[Time::Piece::c_islocal] }
 
 sub as
 {
-	my ($self, $newclass) = @_;
+	my ($self, $conv_spec) = @_;
 
-	if ($newclass eq 'Time::Piece')
+	if ( $conv_spec =~ /^(\W)(\w+)$/ )
+	{
+		my $fmt = join($1, map { "%$_" } split('', $2));
+		return $self->strftime($fmt);
+	}
+	if ( $conv_spec eq 'Time::Piece' )
 	{
 		return $self->{impl};
 	}
 	else
 	{
-		croak("Don't know how to convert " . ref( $self) . " to $newclass");
+		croak("Don't know how to convert " . ref( $self) . " to $conv_spec");
 	}
 }
 
@@ -250,6 +255,7 @@ use overload
 
     say $dt->strftime("%Y-%m-%dT%H:%M:%S%z");
     say $dt->iso8601;
+    say $dt->as("/Ymd");
 
     my $tp = $dt->as('Time::Piece');
 
@@ -458,11 +464,27 @@ Calls L<Time::Piece>'s C<datetime>, which produces an ISO 8601 formatted datetim
 
 Alias for L</iso8601>, in case you can never remember the exact digits (like me).
 
-=head3 as($classname)
+=head3 as($conv_spec)
 
-Converts the datetime to the given class, if possible.  Currently, the only acceptable classname is
-L<Time::Piece>.  (Since a Date::Easy::Datetime is stored internally as a Time::Piece object, this is
-a trivial lookup.)
+Tries to convert the datetime according to the supplied conversion specification.  There are two
+possible formats for the spec:
+
+=over
+
+=item *
+
+If the spec consists of a non-letter followed by one or more letters (and nothing else), C<as> will
+convert this to a time format to be passed to L</strftime>.  For instance, the spec "-Ymd" is
+converted to "%Y-%m-%d", and ":HMS" is converted to "%H:%M:%S".  This allows conversion to a string
+using much more compact formats, such as "/mdy" or even S<" abdYZ">.
+
+=item *
+
+Otherwise, the spec is expected to be a classname, and C<as> tries to convert the datetime to the
+given class.  Currently, the only acceptable classname is L<Time::Piece>.  (Since a
+Date::Easy::Datetime is stored internally as a Time::Piece object, this is a trivial lookup.)
+
+=back
 
 =head3 add_months($num)
 

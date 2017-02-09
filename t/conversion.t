@@ -79,4 +79,10 @@ is $d_tp->minute, 0, "time zero after conversion from Time::Piece (min)";
 is $d_tp->second, 0, "time zero after conversion from Time::Piece (sec)";
 
 
+# datetime: convert to string via short spec
+is $dt->as('/Ymd'), '2001/02/03', "successful short spec conversion: date with /";
+is $dt->as(':HMS'), '04:05:06',   "successful short spec conversion: time with :";
+is $dt->as(' wWj'), '6 05 034',   "successful short spec conversion: totally wacky";
+
+
 done_testing;
