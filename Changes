@@ -2,6 +2,19 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+0.02_01   2017-02-09 15:27:17-08:00 America/Los_Angeles (TRIAL RELEASE)
+
+    [New Features]
+    * New `add_months` method
+    * New `iso8601` method (and `iso` alias)
+
+    [Interface Changes]
+    * Have `as` able to recognize a string like '-Ymd'
+      (same as `strftime('%Y-%m-%d')`)
+
+    [Docs]
+    * Make all method headers consistent (show arguments)
+
 0.02      2016-06-25 02:00:48-07:00 America/Los_Angeles
 
     [New Features]
