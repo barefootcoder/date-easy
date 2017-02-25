@@ -66,7 +66,7 @@ is $d->hour,           0,     "hour accessor is correct for date";
 is $d->minute,         0,   "minute accessor is correct for date";
 is $d->second,         0,   "second accessor is correct for date";
 is $d->epoch,     $epoch,    "epoch accessor is correct for date";
-is $dt->time_zone, 'UTC', "timezone accessor is correct for datetime";
+is $d->time_zone,  'UTC', "timezone accessor is correct for date";
 
 # just like datetimes (see above)
 for (1..7)
