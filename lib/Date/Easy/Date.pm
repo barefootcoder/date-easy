@@ -197,6 +197,18 @@ sub _mkdate
 }
 
 
+############################
+# OVERRIDDEN FROM DATETIME #
+############################
+
+
+sub split
+{
+	my $impl = shift->{impl};
+	( $impl->year, $impl->mon, $impl->mday )
+}
+
+
 # override addition and subtraction
 # numbers added to a ::Date are days
 
@@ -345,6 +357,19 @@ All accessors are inherited from L<Date::Easy::Datetime>, so refer to those docs
 C<hour>, C<minute>, and C<second> will always return 0 for a date object, and C<time_zone> will
 always return 'UTC'.  Likewise, C<is_local> always returns false and C<is_utc> (and its alias
 C<is_gmt>) always return true.
+
+=head2 Overridden Methods
+
+A few methods inherited from L<Date::Easy::Datetime> return different results in
+C<Date::Easy::Date>.
+
+=head3 split
+
+Returns a list consisting of the year, month, and day, in that order, in the same ranges as returned
+by the L<Date::Easy::Datetime/Accessors>.  This differs from datetime's C<split> in that the final
+three elements (hours, minutes, and seconds) are omitted, since they're always zero.  Doesn't return
+anything useful in scalar context, so don't do that.  Calling C<split> in scalar context may
+eventually be changed to throw a warning or fatal error.
 
 =head2 Other Methods
 

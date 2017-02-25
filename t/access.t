@@ -24,6 +24,9 @@ is $dt->second,        6,   "second accessor is correct for datetime";
 is $dt->epoch,    $epoch,    "epoch accessor is correct for datetime";
 is $dt->time_zone, $zone, "timezone accessor is correct for datetime";
 
+# simple split test
+eq_or_diff [$dt->split], [2001, 2, 3, 4, 5, 6], "can split datetime into component pieces";
+
 # try every day of the week, to insure we're getting the proper range
 # start with the first Monday in 2000 (Jan 3rd)
 for (1..7)
@@ -67,6 +70,9 @@ is $d->minute,         0,   "minute accessor is correct for date";
 is $d->second,         0,   "second accessor is correct for date";
 is $d->epoch,     $epoch,    "epoch accessor is correct for date";
 is $d->time_zone,  'UTC', "timezone accessor is correct for date";
+
+# simple split test
+eq_or_diff [$d->split], [2001, 2, 3], "can split date into component pieces";
 
 # just like datetimes (see above)
 for (1..7)

@@ -159,6 +159,12 @@ sub time_zone	{ shift->{impl}->strftime('%Z') }
 sub day_of_week	{ shift->{impl}->day_of_week || 7 }						# change Sunday from 0 to 7
 sub quarter		{ int(shift->{impl}->_mon / 3) + 1 }					# calc quarter from (zero-based) month
 
+sub split
+{
+	my $impl = shift->{impl};
+	( $impl->year, $impl->mon, $impl->mday, $impl->hour, $impl->min, $impl->sec )
+}
+
 
 # FORMATTERS
 
@@ -463,6 +469,13 @@ Calls L<Time::Piece>'s C<datetime>, which produces an ISO 8601 formatted datetim
 =head3 iso
 
 Alias for L</iso8601>, in case you can never remember the exact digits (like me).
+
+=head3 split
+
+Returns a list consisting of the year, month, day, hours, minutes, and seconds, in that order, in
+the same ranges as returned by the L</Accessors>.  Doesn't return anything useful in scalar context,
+so don't do that.  Calling C<split> in scalar context may eventually be changed to throw a warning
+or fatal error.
 
 =head3 as($conv_spec)
 
