@@ -4,10 +4,6 @@ Revision history for Date-Easy
 
 0.03      2017-02-21 19:45:46-08:00 America/Los_Angeles
 
-	[Promote to Full Version]
-
-0.02_01   2017-02-09 15:27:17-08:00 America/Los_Angeles (TRIAL RELEASE)
-
     [New Features]
     * New `add_months` method
     * New `iso8601` method (and `iso` alias)

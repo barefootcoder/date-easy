@@ -6,7 +6,7 @@ Date::Easy - easy dates with Time::Piece compatibility
 
 =head1 VERSION
 
-This document describes version 0.02 of Date::Easy.
+This document describes version 0.03 of Date::Easy.
 
 =head1 SYNOPSIS
 
