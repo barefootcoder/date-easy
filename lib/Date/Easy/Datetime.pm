@@ -157,6 +157,7 @@ sub second		{ shift->{impl}->sec }
 sub epoch		{ shift->{impl}->epoch }
 sub time_zone	{ shift->{impl}->strftime('%Z') }
 sub day_of_week	{ shift->{impl}->day_of_week || 7 }						# change Sunday from 0 to 7
+sub day_of_year	{ shift->{impl}->yday + 1 }								# change from 0-based to 1-based
 sub quarter		{ int(shift->{impl}->_mon / 3) + 1 }					# calc quarter from (zero-based) month
 
 sub split
@@ -453,6 +454,11 @@ Same as C<strftime('%Z')>.
 =head3 day_of_week
 
 Returns the day of the week from 1 (Monday) to 7 (Sunday).
+
+=head3 day_of_year
+
+Returns the day of the year from 1 (January 1st) to either 365 (December 31st) for a non-leap year,
+or 366 for a leap year.
 
 =head3 quarter
 

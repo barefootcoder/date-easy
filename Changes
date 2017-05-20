@@ -3,6 +3,8 @@ Revision history for Date-Easy
 {{$NEXT}}
 
     [New Features]
+    * New `day_of_year` method
+      returns day of year (1-366)
     * New `split` method
       splits to (Y, m, d) for date, (Y, m, d, H, M, S) for datetime
 
