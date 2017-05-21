@@ -11,6 +11,10 @@ Revision history for Date-Easy
       returns day of year (1-366)
     * New `split` method
       splits to (Y, m, d) for date, (Y, m, d, H, M, S) for datetime
+    * New methods: `add_seconds`, `subtract_seconds`, `add_minutes`,
+      `subtract_minutes`, `add_hours`, `subtract_hours`, `add_days`,
+      `subtract_days`, `add_weeks`, `subtract_weeks`, `subtract_months`,
+      `add_years`, `subtract_years`
 
 0.03      2017-02-21 19:45:46-08:00 America/Los_Angeles
 

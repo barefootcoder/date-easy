@@ -218,7 +218,21 @@ use overload
 
 # MATH METHODS
 
+sub add_seconds			{ shift->_add_seconds      (@_) }
+sub add_minutes			{ shift->_add_seconds      ($_[0] * 60)            }
+sub add_hours			{ shift->_add_seconds      ($_[0] * 60 * 60)       }
+sub add_days			{ shift->_add_seconds      ($_[0] * 60 * 60 * 24)  }
+sub add_weeks			{ shift->add_days          ($_[0] * 7)             }
 sub add_months			{ ref($_[0])->new( shift->{impl}->add_months(@_) ) }
+sub add_years			{ ref($_[0])->new( shift->{impl}->add_years (@_) ) }
+
+sub subtract_seconds	{ shift->_subtract_seconds (@_) }
+sub subtract_minutes	{ shift->_subtract_seconds ($_[0] * 60)            }
+sub subtract_hours		{ shift->_subtract_seconds ($_[0] * 60 * 60)       }
+sub subtract_days		{ shift->_subtract_seconds ($_[0] * 60 * 60 * 24)  }
+sub subtract_weeks		{ shift->subtract_days     ($_[0] * 7)             }
+sub subtract_months		{ shift->add_months($_[0] * -1)                    }
+sub subtract_years		{ shift->add_years ($_[0] * -1)                    }
 
 
 
@@ -508,13 +522,6 @@ Date::Easy::Datetime is stored internally as a Time::Piece object, this is a tri
 
 =back
 
-=head3 add_months($num)
-
-Calls L<Time::Piece>'s C<add_months> to add a given number of months and return a new datetime
-object.  The original datetime is not modified.  Supply a negative number to subtract months.  See
-the L<Time::Piece> docs for full details, especially as regards what happens when you try to add
-months to dates at the ends of months.
-
 =head2 Overloaded Operators
 
 =head3 Addition
@@ -526,6 +533,57 @@ datetime object.  The original datetime is not modified.
 
 You can subtract an integer value from a datetime object.  It subtracts that number of seconds and
 returns a new datetime object.  The original datetime is not modified.
+
+=head2 Math Methods
+
+=head3 add_seconds($num)
+
+Same as adding C<$num> directly to the datetime.
+
+=head3 add_minutes($num)
+
+Same as adding C<$num * 60> directly to the datetime.
+
+=head3 add_hours($num)
+
+Same as adding C<$num * 60 * 60> directly to the datetime.
+
+=head3 add_days($num)
+
+Same as adding C<$num * 60 * 60 * 24> directly to the datetime.
+
+=head3 add_weeks($num)
+
+Same as calling C<add_days($num * 7)> on the datetime.
+
+=head3 add_months($num)
+
+Calls L<Time::Piece>'s C<add_months> to add a given number of months and return a new datetime
+object.  The original datetime is not modified.  See the L<Time::Piece> docs for full details,
+especially as regards what happens when you try to add months to dates at the ends of months.
+
+=head3 add_years($num)
+
+Calls L<Time::Piece>'s C<add_years> to add a given number of years and return a new datetime object.
+The original datetime is not modified.  See the L<Time::Piece> docs for full details.  (Though the
+Time::Piece documentation isn't clear on this point, adding a year to Feb 29th of a leap years acts
+correspondingly to adding a month to Jan 29th of a non-leap year.)
+
+=head3 subtract_seconds($num)
+
+=head3 subtract_minutes($num)
+
+=head3 subtract_hours($num)
+
+=head3 subtract_days($num)
+
+=head3 subtract_weeks($num)
+
+=head3 subtract_months($num)
+
+=head3 subtract_years($num)
+
+The same as calling the equivalent C<add_> method, but with C<-$num>.
 
 
 =head1 BUGS, CAVEATS and NOTES
