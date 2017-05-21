@@ -71,7 +71,7 @@ sub _strptime
 	# some validation, then returns epoch seconds by calling timegm (from Time::Local) on it.  I
 	# don't _want_ to call str2time because I'm just going to take the epoch seconds and turn them
 	# back into pieces, so it's inefficicent.  But more importantly I _can't_ call str2time because
-	# it convertes to UTC, and I want the pieces as they are relative to whatever timezone the
+	# it converts to UTC, and I want the pieces as they are relative to whatever timezone the
 	# parsed date has.
 	#
 	# On the other hand, the problem with calling strptime directly is that str2time is doing two
@@ -396,4 +396,4 @@ via C<date>.  That range is 26-Apr-1970 17:46:40 to 2-Dec-1970 15:33:19.
 
 Any timezone portion specified in a string passed to C<date> is completely ignored.
 
-See also the "Limitations" section in C<Date::Easy>.
+See also L<Date::Easy/"Limitations">.

@@ -572,11 +572,11 @@ filed|https://github.com/muir/Time-modules/issues/8>.
 If your local timezone contains leap seconds, you will likely get funky results with UTC datetimes,
 such as this being true:
 
-	$dt->second != $dt->strftime("%S")
+    $dt->second != $dt->strftime("%S")
 
 in all cases except, of course, datetimes from before the first leap second was added (i.e. prior to
 30-Jun-1972 23:59:60).  Weirdly, this isn't a problem with local datetimes.  An upstream bug L<has
 been filed|https://github.com/rjbs/Time-Piece/issues/23>, although there is still some ongoing
 discussion about whether this is a bug or not, and whether it's fixable even if it is.
 
-See also the "Limitations" section in C<Date::Easy>.
+See also L<Date::Easy/"Limitations">.

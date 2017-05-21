@@ -18,7 +18,7 @@ sub import
 {
 	Date::Easy::Date->import(':all');
 	Date::Easy::Datetime->import(':all', @_[1..$#_]);
-	@_ = (shift);
+	@_ = (shift);									# throw away all args except the first (package name)
 	goto &Exporter::import;
 }
 
