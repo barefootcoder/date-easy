@@ -184,11 +184,6 @@ sub iso8601		{ shift->{impl}->datetime }
 *iso = \&iso8601;
 
 
-# MATH METHODS
-
-sub add_months	{ ref($_[0])->new( shift->{impl}->add_months(@_) ) }
-
-
 ########################
 # OVERLOADED OPERATORS #
 ########################
@@ -208,14 +203,22 @@ sub _result_convert
 	return Date::Easy::Datetime->new( scalar $func->(@_) );
 }
 
+sub _add_seconds		{ _result_convert( \&Time::Piece::add      => (_op_convert($_[0]), _op_convert($_[1]), $_[2]) ) }
+sub _subtract_seconds	{ _result_convert( \&Time::Piece::subtract => (_op_convert($_[0]), _op_convert($_[1]), $_[2]) ) }
+
 use overload
 	'""'	=>	sub { Time::Piece::cdate      (_op_convert($_[0])                           ) },
 	'<=>'	=>	sub { Time::Piece::compare    (_op_convert($_[0]), _op_convert($_[1]), $_[2]) },
 	'cmp'	=>	sub { Time::Piece::str_compare(_op_convert($_[0]), _op_convert($_[1]), $_[2]) },
 
-	'+'		=>	sub { _result_convert( \&Time::Piece::add      => (_op_convert($_[0]), _op_convert($_[1]), $_[2]) ) },
-	'-'		=>	sub { _result_convert( \&Time::Piece::subtract => (_op_convert($_[0]), _op_convert($_[1]), $_[2]) ) },
+	'+'		=>	\&_add_seconds,
+	'-'		=>	\&_subtract_seconds,
 ;
+
+
+# MATH METHODS
+
+sub add_months			{ ref($_[0])->new( shift->{impl}->add_months(@_) ) }
 
 
 
