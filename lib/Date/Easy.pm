@@ -143,6 +143,26 @@ is to say, it will probably handle most common uses, but may fail for pathologic
 
 Date::Easy doesn't deal with leap seconds at all.
 
+=head3 Language
+
+Currently, Date::Easy only speaks English.  Specifically, that means:
+
+=over
+
+=item *
+
+When parsing human-readable strings, it can only understand abbreviations and whole names of days of
+the week and months of the year if they are in English.
+
+=item *
+
+When converting to human-readable strings, using C<strftime> (or C<as> with a non-class-string
+argument, which just calls C<strftime> underneath), it will I<probably> only render days of the week
+and months of the year in English.  However, it I<may> respect the current locale, depending on your
+system's underlying POSIX C<strftime> implementation.
+
+=back
+
 
 =head1 USAGE
 

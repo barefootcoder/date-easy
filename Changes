@@ -16,6 +16,9 @@ Revision history for Date-Easy
       `subtract_days`, `add_weeks`, `subtract_weeks`, `subtract_months`,
       `add_years`, `subtract_years`
 
+    [Docs]
+    * Added "Language" section to "Limitations"
+
 0.03      2017-02-21 19:45:46-08:00 America/Los_Angeles
 
     [New Features]
