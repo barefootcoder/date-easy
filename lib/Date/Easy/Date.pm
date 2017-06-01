@@ -231,6 +231,15 @@ sub _subtract
 }
 
 
+# These are illegal to call.
+sub add_seconds { die("cannot call add_seconds on a Date value") }
+sub add_minutes { die("cannot call add_minutes on a Date value") }
+sub add_hours { die("cannot call add_hours on a Date value") }
+sub subtract_seconds { die("cannot call subtract_seconds on a Date value") }
+sub subtract_minutes { die("cannot call subtract_minutes on a Date value") }
+sub subtract_hours { die("cannot call subtract_hours on a Date value") }
+
+
 
 1;
 
@@ -370,6 +379,21 @@ by the L<Date::Easy::Datetime/Accessors>.  This differs from datetime's C<split>
 three elements (hours, minutes, and seconds) are omitted, since they're always zero.  Doesn't return
 anything useful in scalar context, so don't do that.  Calling C<split> in scalar context may
 eventually be changed to throw a warning or fatal error.
+
+=head3 add_seconds
+
+=head3 add_minutes
+
+=head3 add_hours
+
+=head3 subtract_seconds
+
+=head3 subtract_minutes
+
+=head3 subtract_hours
+
+These methods throw exceptions if you call them for a date value, because they would adjust the time
+portion, and the time portion of a date value must always be midnight.
 
 =head2 Other Methods
 
