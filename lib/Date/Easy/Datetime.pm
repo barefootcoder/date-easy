@@ -186,7 +186,7 @@ sub iso8601		{ shift->{impl}->datetime }
 
 # MATH METHODS
 
-sub add_months	{ shift->{impl}->add_months(@_) }
+sub add_months	{ ref($_[0])->new( shift->{impl}->add_months(@_) ) }
 
 
 ########################

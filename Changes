@@ -2,6 +2,10 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+    [Bug Fixes]
+    * `add_months` was returning a Time::Piece instead of a Date::Easy
+      object (fixed)
+
     [New Features]
     * New `day_of_year` method
       returns day of year (1-366)

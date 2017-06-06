@@ -11,6 +11,7 @@ use DateEasyTestUtil qw< is_true is_false >;
 
 
 my $FMT = '%Y/%m/%d %H:%M:%S';
+my $CLASS = 'Date::Easy::Datetime';
 
 # test datetimes
 my $dt1 = datetime("2010-01-01 13:06:00");
@@ -39,16 +40,17 @@ is $dt3 - 30, $dt1, "datetimes subtract seconds";
 
 
 # type checks for things
-isa_ok $dt1 + 30, 'Date::Easy::Datetime', 'addition result';
-isa_ok $dt3 - 30, 'Date::Easy::Datetime', 'subtraction result';
+isa_ok $dt1 + 30, $CLASS, 'addition result';
+isa_ok $dt3 - 30, $CLASS, 'subtraction result';
 
 
 # adding months is, obviously, harder
 
 my $dt4 = $dt3->add_months(2);
+isa_ok $dt4, $CLASS, 'add_months result' or diag('    isa ', ref $dt4);
 is $dt4->strftime($FMT), '2010/03/01 13:06:30', 'month addition';
 $dt4 = $dt3->add_months(-2);
-is $dt4->strftime($FMT), '2009/11/01 13:06:30', 'month subtraction';
+is $dt4->strftime($FMT), '2009/11/01 13:06:30', 'month negative addition';
 
 # cross a DST boundary
 $dt4 = $dt3->add_months(3);
