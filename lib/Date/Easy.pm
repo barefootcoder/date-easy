@@ -65,6 +65,13 @@ sub import
     # prints "UTC"
 
 
+    # UNITS
+
+    # basically just like the interface from Date::Piece
+    say 8 * weeks;
+    # prints "8 weeks"
+
+
 =head1 DESCRIPTION
 
 Date::Easy provides simple date and datetime objects that will do what you expect, provided you
@@ -160,6 +167,10 @@ When converting to human-readable strings, using C<strftime> (or C<as> with a no
 argument, which just calls C<strftime> underneath), it will I<probably> only render days of the week
 and months of the year in English.  However, it I<may> respect the current locale, depending on your
 system's underlying POSIX C<strftime> implementation.
+
+=item *
+
+If you convert a unit (L<Date::Easy::Units>) to a string, you get the English name for the unit.
 
 =back
 
