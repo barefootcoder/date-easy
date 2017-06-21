@@ -200,19 +200,51 @@ sub _op_convert
 sub _result_convert
 {
 	my $func = shift;
-	return Date::Easy::Datetime->new( scalar $func->(@_) );
+	return ref($_[0])->new( scalar $func->(_op_convert($_[0]), _op_convert($_[1]), $_[2]) );
 }
 
-sub _add_seconds		{ _result_convert( \&Time::Piece::add      => (_op_convert($_[0]), _op_convert($_[1]), $_[2]) ) }
-sub _subtract_seconds	{ _result_convert( \&Time::Piece::subtract => (_op_convert($_[0]), _op_convert($_[1]), $_[2]) ) }
+sub _add_seconds		{ _result_convert( \&Time::Piece::add      => @_ ) }
+sub _subtract_seconds	{ _result_convert( \&Time::Piece::subtract => @_ ) }
+# subclasses can override these to change what units an integer represents
+sub _add_integer		{ $_[0]->add_seconds($_[1])      }
+sub _subtract_integer	{ $_[0]->subtract_seconds($_[1]) }
+
+sub _dispatch_add
+{
+	if ( blessed $_[1] && $_[1]->isa('Date::Easy::Units') )
+	{
+		$_[1]->_add_to($_[0]);
+	}
+	else
+	{
+		# this should DTRT for whichever class we are
+		$_[0]->_add_integer($_[1]);
+	}
+}
+
+sub _dispatch_subtract
+{
+	if ( blessed $_[1] && $_[1]->isa('Date::Easy::Units') )
+	{
+		# this shouldn't be possible ...
+		die("should have called overloaded - for ::Units") if $_[2];
+		# as the name implies, this method assumes reversed operands
+		$_[1]->_subtract_from($_[0]);
+	}
+	else
+	{
+		# this should DTRT for whichever class we are
+		$_[0]->_subtract_integer($_[1]);
+	}
+}
 
 use overload
 	'""'	=>	sub { Time::Piece::cdate      (_op_convert($_[0])                           ) },
 	'<=>'	=>	sub { Time::Piece::compare    (_op_convert($_[0]), _op_convert($_[1]), $_[2]) },
 	'cmp'	=>	sub { Time::Piece::str_compare(_op_convert($_[0]), _op_convert($_[1]), $_[2]) },
 
-	'+'		=>	\&_add_seconds,
-	'-'		=>	\&_subtract_seconds,
+	'+'		=>	\&_dispatch_add,
+	'-'		=>	\&_dispatch_subtract,
 ;
 
 

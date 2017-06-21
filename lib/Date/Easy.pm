@@ -70,6 +70,8 @@ sub import
     # UNITS
 
     # basically just like the interface from Date::Piece
+    say today + 3 * months;
+    say now + 2 * hours - 5 * minutes;
     say 8 * weeks;
     # prints "8 weeks"
 
@@ -111,7 +113,8 @@ attributes of the objects:
 
 or you can do simple date math with them.  You may add and subtract integers to/from a date, which
 are interpreted as days, and you may add and subtract integers to/from a datetime, which are
-interpreted as seconds.
+interpreted as seconds.  Adding and subtracting units objects to/from dates and datetimes add or
+subtract the appropriate quantity of the appropriate unit to/from the date or datetime.
 
 That's really all there is to it, for the basics.
 

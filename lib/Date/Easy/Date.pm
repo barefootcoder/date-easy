@@ -212,23 +212,8 @@ sub split
 # override addition and subtraction
 # numbers added to a ::Date are days
 
-use overload
-		'+' => \&_add,
-		'-' => \&_subtract;
-
-sub _add
-{
-	my ($self, $rhs) = @_;
-
-	return $self->_mkdate($self->epoch + 86_400 * $rhs);
-}
-
-sub _subtract
-{
-	my ($self, $rhs) = @_;
-
-	return $self->_mkdate($self->epoch - 86_400 * $rhs);
-}
+sub _add_integer		{ $_[0]->add_days($_[1])      }
+sub _subtract_integer	{ $_[0]->subtract_days($_[1]) }
 
 
 # These are illegal to call.

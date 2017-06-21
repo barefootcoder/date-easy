@@ -63,10 +63,30 @@ sub to_string
 # OVERLOADED OPERATORS #
 ########################
 
+sub _add_to
+{
+	my ($self, $operand) = @_;
+	my $unit = $self->{unit};
+	my $qty  = $self->{qty};
+	my $method = "add_$unit";
+	return $operand->$method($qty);
+}
+
+sub _subtract_from
+{
+	my ($self, $operand) = @_;
+	my $unit = $self->{unit};
+	my $qty  = $self->{qty};
+	my $method = "subtract_$unit";
+	return $operand->$method($qty);
+}
+
 use overload
 	'""'	=>	sub { shift->to_string },
 	'cmp'	=>	sub { $_[0]->to_string cmp $_[1] },
 
+	'+'		=>	sub { shift->_add_to( @_ ) },
+	'-'		=>	sub { $_[2] ? shift->_subtract_from( @_ ) : croak("can't subtract from a unit") },
 	'*'		=>	sub { __PACKAGE__->new( $_[0]->{unit}, $_[0]->{qty} * $_[1] ) },
 ;
 
@@ -119,6 +139,10 @@ default) functions:
     my $s1 = seconds;
     my $m4 = 4 * minutes;
 
+Arithmetic operators (plus and minus) can be used to add or subtract some amount of time to or from
+a date or datetime.  Multiplcation can be used to change the quantity of a units object (as shown
+above).
+
 Units objects are immutable.
 
 See L<Date::Easy> for more general usage notes.
@@ -154,6 +178,23 @@ by an integer to get a different quantity.
 Takes either one or two arguments: unit name (required) and quantity (optional).  Most of the time
 you will not use this.
 
+(Technically speaking, you can use C<new> to create any unit you want.  So you might:
+
+    my $u = Date::Easy::Units->new("bmoogles");
+    say $u;             # prints "1 bmoogle"
+    say $u * 4;         # prints "4 bmoogles"
+    my $d = my_date_thing();
+    $d + $u * 4;        # calls $d->add_bmoogles(4)
+
+and, assuming C<my_date_thing> returns an object with an C<add_bmoogles> method (and a
+C<subtract_bmoogles> method), that will actually work.  Then you could even:
+
+	sub bmoogles () { Date::Easy::Units->new("bmoogles") }
+	say my_date_thing() + 4*bmoogles;
+
+Not saying that any of that is a good idea, of course ... just that you I<could>, if you were so
+inclined.)
+
 =head2 Other Methods
 
 =head3 to_string
@@ -169,6 +210,36 @@ the operand.  Thus, the operand should be an integer.  Multiplying by a floating
 exception.  Multiplying by a string likely just gets you 0 (depending on whether your string can be
 interpreted as a number), and probably a warning (if you have warnings turned on (which you
 should)).
+
+=head3 Addition
+
+When you add a units object to a date (L<Date::Easy::Date>) or a datetime (L<Date::Easy::Datetime>),
+it adds the appropriate number of the appropriate units to that date or datetime.  Thus:
+
+    use Date::Easy;
+
+    say datetime("2010-01-01 noon") + 3*hours + 39*minutes;
+    # prints "Fri Jan  1 15:39:00 2010"
+    say 14*weeks + date("2015-07-17");
+    # addition is transitive: prints "Fri Oct 23 00:00:00 2015"
+    say today + 14*hours;
+    # throws exception: you can't add fractional days to a date
+    say 3*months + 4*days;
+    # throws exception: you can't add units to each other
+    say now + 3*months + 4*days;
+    # fine: addition is evaluated left-to-right
+
+=head3 Subtraction
+
+Subtracting a units object is just like adding the same units object times -1, except that of course
+subtraction is not transitive.  So:
+
+    use Date::Easy;
+
+    say now - 14*hours;
+    # fine
+    say 14*hours - now;
+    # throws exception: nonsensical
 
 
 =head1 BUGS, CAVEATS and NOTES
