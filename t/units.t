@@ -1,6 +1,6 @@
 use Test::Most 0.25;
 
-use Date::Easy::Units ':all';
+use Date::Easy;
 
 
 my @units = qw< seconds minutes hours days weeks months years >;

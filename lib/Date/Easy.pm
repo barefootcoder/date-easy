@@ -8,16 +8,18 @@ use autodie;
 
 use Date::Easy::Date ();
 use Date::Easy::Datetime ();
+use Date::Easy::Units ();
 
 use Exporter;
 use parent 'Exporter';
-our @EXPORT = ( @Date::Easy::Date::EXPORT_OK, @Date::Easy::Datetime::EXPORT_OK, );
+our @EXPORT = ( @Date::Easy::Date::EXPORT_OK, @Date::Easy::Datetime::EXPORT_OK, @Date::Easy::Units::EXPORT_OK, );
 
 
 sub import
 {
 	Date::Easy::Date->import(':all');
 	Date::Easy::Datetime->import(':all', @_[1..$#_]);
+	Date::Easy::Units->import(':all');
 	@_ = (shift);									# throw away all args except the first (package name)
 	goto &Exporter::import;
 }
@@ -80,9 +82,11 @@ for this:
 
     use Date::Easy::Date ':all';
     use Date::Easy::Datetime ':all';
+    use Date::Easy::Units ':all';
 
-So, for full details, you should see the docs for L<Date::Easy::Date> and L<Date::Easy::Datetime>.
-However, there are also a few parameters you can pass to Date::Easy (see L</USAGE>).
+So, for full details, you should see the docs for L<Date::Easy::Date>, L<Date::Easy::Datetime> and
+L<Date::Easy::Units>.  However, there are also a few parameters you can pass to Date::Easy (see
+L</USAGE>).
 
 =head2 Quick Start
 
@@ -184,16 +188,19 @@ L<Date::Easy::Datetime>.  Thus the following are equivalent:
     # is the same as:
     use Date::Easy::Date ':all';
     use Date::Easy::Datetime qw< :all local >;
+    use Date::Easy::Units ':all';
 
     use Date::Easy 'UTC';
     # is the same as:
     use Date::Easy::Date ':all';
     use Date::Easy::Datetime qw< :all UTC >;
+    use Date::Easy::Units ':all';
 
     use Date::Easy 'GMT';
     # is the same as:
     use Date::Easy::Date ':all';
     use Date::Easy::Datetime qw< :all GMT >;
+    use Date::Easy::Units ':all';
 
 As the Date::Easy::Datetime docs will tell you, "UTC" and "GMT" are exactly equivalent as far as
 Date::Easy is concerned.  Passing "local" is redundant, as it is the default, but perhaps you just
