@@ -210,8 +210,29 @@ Date::Easy is concerned.  Passing "local" is redundant, as it is the default, bu
 want to be explicit.
 
 
-=head1 BUGS, CAVEATS and NOTES
+=head1 DETAILS
 
-These docs are currently just the basics; more complete docs coming soon.  For far more than you
-ever wanted to know about Date::Easy, please refer to my blog series
-I<L<A Date with CPAN|http://blogs.perl.org/users/buddy_burden/2015/09/a-date-with-cpan-part-1-state-of-the-union.html>>.
+For more details on datetimes, see L<Date::Easy::Datetime>.
+
+For more details on dates, see L<Date::Easy::Date>.
+
+For more details on units, see L<Date::Easy::Units>.
+
+
+=head1 INSPIRATION AND CREDITS
+
+For far more than you ever wanted to know about Date::Easy, including inspirations and design goals,
+please refer to my blog series I<L<A Date with
+CPAN|http://blogs.perl.org/users/buddy_burden/2015/09/a-date-with-cpan-part-1-state-of-the-union.html>>.
+
+The implementation of both dates and datetimes is almost entirely handled by L<Time::Piece>, by Matt
+Sergeant and Jarkko Hietaniemi (based on ideas from Larry Wall).
+
+The interface of datetimes (such as method names and data ranges) more closely conforms to that of
+L<DateTime>, by Dave Rolsky.
+
+The interface of constructors (such as `today` and `date`) and that of units objects is shamelessly
+stolen from L<Date::Piece>, by Eric Wilhelm.
+
+Date::Easy exists by standing on the shoulders of these giants.  All I did was glue the bits
+together.
