@@ -668,6 +668,16 @@ If the DST flag (i.e. the condition of either being on daylight savings or not) 
 Hopefully this means hitting this bug will be rare.  An upstream bug L<has been
 filed|https://github.com/muir/Time-modules/issues/8>.
 
+There is a bug in L<Date::Parse> which causes the supplied century of a 4-digit year to be ignored
+when it is outside the sliding window that L<Time::Local> uses to guess the century for a 2-digit
+year.  This simple code demonstrates the problem:
+
+    say datetime("1/1/1965") # Thu Jan  1 00:00:00 2065
+
+Any year which is 50 years or more in the past will have this behavior.  There is an outstanding
+L<upstream bug|https://rt.cpan.org/Public/Bug/Display.html?id=105031> for this issue.  Note that
+dates don't have this problem; only datetimes.
+
 If your local timezone contains leap seconds, you will likely get funky results with UTC datetimes,
 such as this being true:
 

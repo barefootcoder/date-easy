@@ -405,4 +405,13 @@ via C<date>.  That range is 26-Apr-1970 17:46:40 to 2-Dec-1970 15:33:19.
 
 Any timezone portion specified in a string passed to C<date> is completely ignored.
 
+Because dates I<don't> have the same bug with 4-digit years that are 50+ years old that datetimes
+do, they have a different bug instead.  If you pass a 2-digit year to `date` and it gets handled by
+L<Date::Parse>, it will always come back in the 20th century:
+
+    say date("2/1/17"); # Thu Feb  1 00:00:00 1917
+
+Avoiding this is simple: always use 4-digit dates (which is a good habit to get into anyway).  Given
+the choice between the two bugs, this was considered the lesser of two weevils.
+
 See also L<Date::Easy/"Limitations">.
