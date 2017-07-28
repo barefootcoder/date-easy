@@ -2,7 +2,7 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
-0.03_01   2017-06-25 21:31:24-07:00 America/Los_Angeles (TRIAL RELEASE)
+0.04      2017-07-27 17:47:54-07:00 America/Los_Angeles
 
     [Bug Fixes]
     * `add_months` was returning a Time::Piece instead of a Date::Easy
