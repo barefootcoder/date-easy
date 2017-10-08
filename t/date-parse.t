@@ -1,6 +1,6 @@
 use Test::Most 0.25;
 
-use Date::Easy;
+use Date::Easy 'UTC';
 
 use Time::Local;
 use Date::Parse;

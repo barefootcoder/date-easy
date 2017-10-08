@@ -2,6 +2,10 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+    [Distro Fixes]
+    * Change date-parse unit tests to use UTC so they work in all timezones.
+      github #10 (thx Ron Savage (RSAVAGE))
+
 0.04      2017-07-27 17:47:54-07:00 America/Los_Angeles
 
     [Bug Fixes]
