@@ -2,11 +2,14 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+    [Distro Fixes]
+    * Change date-parse unit tests to calculate epoch dates
+      so they work in all timezones.
+      github #10 (thx Ron Savage (RSAVAGE))
+
 0.04_01   2017-10-08 00:15:05-07:00 America/Los_Angeles (TRIAL RELEASE)
 
-    [Distro Fixes]
-    * Change date-parse unit tests to use UTC so they work in all timezones.
-      github #10 (thx Ron Savage (RSAVAGE))
+    N/A
 
 0.04      2017-07-27 17:47:54-07:00 America/Los_Angeles
 
