@@ -2,6 +2,8 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+0.04_03   2018-05-24 03:10:57-07:00 America/Los_Angeles (TRIAL RELEASE)
+
     [New Features]
     * Can now subtract one datetime from another (gives seconds).
     * Can now subtract one date from another (gives days).
