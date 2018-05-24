@@ -128,7 +128,8 @@ is to say, it will probably handle most common uses, but may fail for pathologic
 
 =head3 Leap Seconds
 
-Date::Easy doesn't deal with leap seconds at all.
+Date::Easy doesn't deal with leap seconds at all.  In fact, it's likely that the unit tests will
+fail during module install if your local timezone includes leap seconds.
 
 =head3 Language
 
