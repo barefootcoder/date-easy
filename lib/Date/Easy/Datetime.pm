@@ -231,6 +231,12 @@ sub _dispatch_subtract
 		# as the name implies, this method assumes reversed operands
 		$_[1]->_subtract_from($_[0]);
 	}
+	elsif ( blessed $_[1] && $_[1]->isa('Date::Easy::Datetime') )
+	{
+		my ($lhs, $rhs) = $_[2] ? @_[1,0] : @_[0,1];
+		my $divisor = $lhs->isa('Date::Easy::Date') && $rhs->isa('Date::Easy::Date') ? 86_400 : 1;
+		($lhs->epoch - $rhs->epoch) / $divisor;
+	}
 	else
 	{
 		# this should DTRT for whichever class we are
@@ -286,6 +292,7 @@ sub subtract_years		{ shift->add_years ($_[0] * -1)                    }
     # addition and subtraction work in increments of seconds
     my $this_time_yesterday = now - 60*60*24;
     my $after_30_minutes = now + 30 * 60;
+    say "$dt was ", now - $dt, " seconds ago";
     # or can add or subtract months
     my $next_month = now->add_months(1);
     my $last_month = now->add_months(-1);
@@ -565,6 +572,11 @@ datetime object.  The original datetime is not modified.
 
 You can subtract an integer value from a datetime object.  It subtracts that number of seconds and
 returns a new datetime object.  The original datetime is not modified.
+
+You can subtract one datetime from another; the result is the number of seconds you would have to
+add to the right-hand operand to get the left-hand operand (therefore, the result is positive when
+the left-hand side is a later datetime, and negative when the left-hand side is earlier).  Currently
+the result of attempting to subtract a date from a datetime is undefined.
 
 =head2 Math Methods
 

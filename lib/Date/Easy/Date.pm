@@ -244,6 +244,7 @@ sub subtract_hours { die("cannot call subtract_hours on a Date value") }
     # addition and subtraction work in increments of days
     my $tomorrow = today + 1;
     my $last_week = today - 7;
+    say "$d was ", today - $d, " days ago";
 
     my $yr = $d->year;
     my $mo = $d->month;
@@ -395,6 +396,11 @@ object.  The original date is not modified.
 
 You can subtract an integer value from a date object.  It subtracts that number of days and returns
 a new date object.  The original date is not modified.
+
+You can subtract one date from another; the result is the number of days you would have to add to
+the right-hand operand to get the left-hand operand (therefore, the result is positive when the
+left-hand side is a later date, and negative when the left-hand side is earlier).  Currently the
+result of attempting to subtract a datetime from a date is undefined.
 
 
 =head1 BUGS, CAVEATS and NOTES
