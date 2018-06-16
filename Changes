@@ -2,6 +2,8 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+0.06      2018-06-15 22:34:29-07:00 America/Los_Angeles
+
     [Bug Fixes]
     * workaround for upstream bug in Date::Parse [base bug RT/53413]
       now doing a more faithful recreation of D::P's strptime
