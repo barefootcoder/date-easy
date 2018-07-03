@@ -2,6 +2,8 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+0.06_01   2018-07-03 03:15:15-07:00 America/Los_Angeles (TRIAL RELEASE)
+
     [Efficiency Improvements]
     * resimplify `strftime` implementation to simple delegation
       this made possible by the fixing of Time::Piece GitHub #24 (thx ESAYM!)
