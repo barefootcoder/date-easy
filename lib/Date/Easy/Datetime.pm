@@ -272,17 +272,7 @@ sub split
 
 # FORMATTERS
 
-sub strftime
-{
-	my ($self, $format) = @_;
-	return $self->{impl}->strftime unless defined $format;
-
-	# Handle the %s format specifier ourselves because otherwise our users may get a nasty shock.
-	# See https://github.com/rjbs/Time-Piece/issues/24 for full details.
-	$format =~ s/(?<!%)%s/$self->epoch/eg;
-	return $self->{impl}->strftime($format);
-}
-
+sub strftime	{ shift->{impl}->strftime(@_) }
 sub iso8601		{ shift->{impl}->datetime }
 *iso = \&iso8601;
 
