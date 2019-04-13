@@ -2,7 +2,11 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+0.06_03   2019-04-13 03:39:45-07:00 America/Los_Angeles (TRIAL RELEASE)
+
     [Distro Fixes]
+    * Fix Kwalitee issues
+      github #11 (thx Zak B. Elep (ZAKAME))
     * Fix failing unit test caused by bug in `str2time`
       github #12 (thx Slaven Rezić (SREZIC))
 
