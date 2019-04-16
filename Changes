@@ -2,20 +2,18 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
-0.06_03   2019-04-13 03:39:45-07:00 America/Los_Angeles (TRIAL RELEASE)
+0.07      2019-04-16 00:33:10-07:00 America/Los_Angeles
+
+    [Efficiency Improvements]
+    * resimplify `strftime` implementation to simple delegation
+      this made possible by the fixing of Time::Piece GitHub #24 (thx ESAYM!)
+      that fix means we must require at least 1.32 of Time::Piece
 
     [Distro Fixes]
     * Fix Kwalitee issues
       github #11 (thx Zak B. Elep (ZAKAME))
     * Fix failing unit test caused by bug in `str2time`
       github #12 (thx Slaven Rezić (SREZIC))
-
-0.06_01   2018-07-03 03:15:15-07:00 America/Los_Angeles (TRIAL RELEASE)
-
-    [Efficiency Improvements]
-    * resimplify `strftime` implementation to simple delegation
-      this made possible by the fixing of Time::Piece GitHub #24 (thx ESAYM!)
-      that fix means we must require at least 1.32 of Time::Piece
 
 0.06      2018-06-15 22:34:29-07:00 America/Los_Angeles
 
