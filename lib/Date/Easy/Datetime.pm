@@ -740,7 +740,7 @@ it was going to do.)
 
 There is a bug in L<Time::ParseDate> which causes epoch seconds to be one hour off in certain
 specific circumstances.  Please note that you will I<not> hit this bug if the string you pass to
-L</datetime> has I<any> of the following characteristicts:
+L</datetime($string)> has I<any> of the following characteristicts:
 
 =over 4
 
