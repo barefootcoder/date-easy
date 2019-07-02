@@ -448,8 +448,8 @@ with epoch seconds.
 =head3 UTC
 
 'UTC' means to use the UTC timzeone, which essentialy means to ignore timezone altogether.  That is,
-under 'UTC' Date::Easy::Datetime will use C<gmtime> and C<timegm> (technically, C<timegm_local>,
-from L<Time::Local>) to deal with epcoh seconds.
+under 'UTC' Date::Easy::Datetime will use C<gmtime> and C<timegm> (technically, C<timegm_modern>,
+from L<Time::Local>) to deal with epoch seconds.
 
 =head3 GMT
 

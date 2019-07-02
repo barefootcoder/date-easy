@@ -350,7 +350,7 @@ via C<date>.  That range is 26-Apr-1970 17:46:40 to 2-Dec-1970 15:33:19.
 
 Any timezone portion specified in a string passed to C<date> is completely ignored.
 
-If you pass a 2-digit year to `date`, it will always come back in the 20th century:
+If you pass a 2-digit year to C<date>, it will always come back in the 20th century:
 
     say date("2/1/17"); # Thu Feb  1 00:00:00 1917
 
