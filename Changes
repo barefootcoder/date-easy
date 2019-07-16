@@ -2,6 +2,8 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+0.08_02   2019-07-16 02:07:08-07:00 America/Los_Angeles (TRIAL RELEASE)
+
     [Docs]
     * Fixed a POD link (github #13--thx manwar)
 
