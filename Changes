@@ -2,6 +2,10 @@ Revision history for Date-Easy
 
 {{$NEXT}}
 
+    [Distro Fixes]
+    * Fix failing unit test caused by imperfect mirroring of `gmtime`/`timegm`
+      github #14 (thx Slaven Rezić (SREZIC))
+
 0.09      2019-09-03 16:34:03-07:00 America/Los_Angeles
 
     [Docs]
