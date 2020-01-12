@@ -704,7 +704,7 @@ especially as regards what happens when you try to add months to dates at the en
 
 Calls L<Time::Piece>'s C<add_years> to add a given number of years and return a new datetime object.
 The original datetime is not modified.  See the L<Time::Piece> docs for full details.  (Though the
-Time::Piece documentation isn't clear on this point, adding a year to Feb 29th of a leap years acts
+Time::Piece documentation isn't clear on this point, adding a year to Feb 29th of a leap year acts
 correspondingly to adding a month to Jan 29th of a non-leap year.)
 
 =head3 subtract_seconds($num)
